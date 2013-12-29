@@ -4,7 +4,11 @@ import java.io.File;
 
 public enum OS
 {
-	WINDOWS("windows", "win"), OSX("osx", "mac", "macos"), LINUX("linux", "unix"), SOLARIS("solaris", "sunos"), UNKNOWN("unknown");
+	WINDOWS("windows", "win"),
+	OSX("osx", "mac", "macos"),
+	LINUX("linux", "unix"),
+	SOLARIS("solaris", "sunos"),
+	UNKNOWN("unknown");
 
 	private String osName;
 	private String[] aliases;
