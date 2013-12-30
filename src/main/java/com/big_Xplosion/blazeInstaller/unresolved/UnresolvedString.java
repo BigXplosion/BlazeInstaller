@@ -1,4 +1,4 @@
-package com.big_xplosion.blazebuilder.unresolved;
+package com.big_Xplosion.blazeInstaller.unresolved;
 
 public class UnresolvedString extends UnresolvedBase<String>
 {
