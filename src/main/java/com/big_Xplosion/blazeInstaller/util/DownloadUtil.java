@@ -36,7 +36,9 @@ public class DownloadUtil
 
 			if (!downloadFile(name, libPath, libURL))
 				if (type.equals(InstallType.CLIENT) && libURL.startsWith(LibURL.MC_DOWNLOAD_LIB_ROOT_URL))
-					System.out.println(String.format("failed to download %s, minecraft launcher wil download these on the next run.", name));
+					System.out.println(String.format("failed to download %s, minecraft launcher will download these on the next run.", name));
+				else if (type.equals(InstallType.MCP) && libURL.startsWith(LibURL.MC_DOWNLOAD_LIB_ROOT_URL))
+					System.out.println(String.format("failed to download %s, mcp will download these later."));
 				else
 					System.out.println(String.format("failed to download %s, try again and if it still fails try contacting an author.", name));
 			else
