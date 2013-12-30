@@ -29,8 +29,11 @@ public class DownloadUtil
 			String path = parts[0] + "/" + parts[1] + "/" + parts[2] + "/" + jarName;
 
 			File libPath = new File(libDir, path.replace('/', File.separatorChar));
-			libPath.getParentFile().mkdirs();
 
+			if (isLibInstalled(libPath))
+				continue;
+
+			libPath.getParentFile().mkdirs();
 			String libURL = LibURL.MC_DOWNLOAD_LIB_ROOT_URL;
 			libURL += path;
 
@@ -46,16 +49,34 @@ public class DownloadUtil
 		}
 	}
 
+	public static boolean isLibInstalled(File libJar)
+	{
+		if (libJar.exists())
+			return true;
+
+		return false;
+	}
+
 	public static boolean downloadFile(String name, File path, String downloadUrl)
 	{
+		System.out.println(String.format("Attempt at downloading file: %s", name));
+
 		try
 		{
-			System.out.println(String.format("Attempt at downloading library: %s", name));
 			URL url = new URL(downloadUrl);
-			URLConnection connection = url.openConnection();
+			final URLConnection connection = url.openConnection();
 			connection.setConnectTimeout(6000);
 			connection.setReadTimeout(6000);
-			InputSupplier<InputStream> urlSupplier = new URLISSupplier(connection);
+
+			InputSupplier<InputStream> urlSupplier = new InputSupplier<InputStream>()
+			{
+				@Override
+				public InputStream getInput() throws IOException
+				{
+					return connection.getInputStream();
+				}
+			};
+
 			Files.copy(urlSupplier, path);
 
 			return true;
@@ -65,22 +86,6 @@ public class DownloadUtil
 			e.printStackTrace();
 
 			return false;
-		}
-	}
-
-	public static class URLISSupplier implements InputSupplier<InputStream>
-	{
-		private URLConnection connection;
-
-		public URLISSupplier(URLConnection connection)
-		{
-			this.connection = connection;
-		}
-
-		@Override
-		public InputStream getInput() throws IOException
-		{
-			return connection.getInputStream();
 		}
 	}
 }

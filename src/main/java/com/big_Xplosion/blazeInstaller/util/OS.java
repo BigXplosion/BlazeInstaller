@@ -41,7 +41,12 @@ public enum OS
 		return System.getProperty("os.version");
 	}
 
-	public static File getMinecraftDirectory()
+	public static File getHomeDir()
+	{
+		return new File(System.getProperty("user.home"));
+	}
+
+	public static File getMinecraftDir()
 	{
 		String homeDir = System.getProperty("user.home");
 
