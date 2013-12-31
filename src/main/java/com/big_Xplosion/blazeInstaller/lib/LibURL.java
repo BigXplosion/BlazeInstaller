@@ -16,5 +16,5 @@ public class LibURL
 
 	public static final String MC_ASSET_INDEX_URL = MC_INDEX_URL + "{ASSET_INDEX}.json";
 
-	public static final String MCP_DOWNLOAD_URL = "http://mcp.ocean-labs.de/files/archive/mcp804.zip";
+	public static final String MCP_DOWNLOAD_URL = "http://mcp.ocean-labs.de/files/archive/mcp{MCP_VERSION}.zip";
 }
