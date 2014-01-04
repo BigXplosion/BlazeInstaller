@@ -1,5 +1,7 @@
 package com.big_Xplosion.blazeInstaller.unresolved;
 
+import com.big_Xplosion.blazeInstaller.unresolved.resolve.IResolver;
+
 public abstract class UnresolvedBase<V>
 {
 	private String input;

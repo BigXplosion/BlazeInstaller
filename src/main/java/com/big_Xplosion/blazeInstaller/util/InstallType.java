@@ -1,6 +1,7 @@
 package com.big_Xplosion.blazeInstaller.util;
 
 import java.io.File;
+import java.io.IOException;
 
 import com.big_Xplosion.blazeInstaller.action.ClientInstall;
 import com.big_Xplosion.blazeInstaller.action.IInstallerAction;
@@ -31,7 +32,7 @@ public enum InstallType
 		}
 	}
 
-	public boolean install(File targetFile)
+	public boolean install(File targetFile) throws IOException
 	{
 		return actionClass.install(targetFile);
 	}

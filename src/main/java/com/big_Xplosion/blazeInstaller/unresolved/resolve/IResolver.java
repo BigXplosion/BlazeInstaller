@@ -1,4 +1,4 @@
-package com.big_Xplosion.blazeInstaller.unresolved;
+package com.big_Xplosion.blazeInstaller.unresolved.resolve;
 
 public interface IResolver
 {
