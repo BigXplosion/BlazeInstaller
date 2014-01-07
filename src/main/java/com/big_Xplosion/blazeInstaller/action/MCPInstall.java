@@ -9,16 +9,14 @@ import com.big_Xplosion.blazeInstaller.unresolved.UnresolvedString;
 import com.big_Xplosion.blazeInstaller.unresolved.resolve.VersionResolver;
 import com.big_Xplosion.blazeInstaller.util.DownloadUtil;
 import com.big_Xplosion.blazeInstaller.util.ExtractUtil;
+import com.google.common.io.Files;
 
 public class MCPInstall implements IInstallerAction
 {
 	@Override
 	public boolean install(File mcpTarget) throws IOException
 	{
-		if (!mcpTarget.exists())
-		{
-			mcpTarget.mkdirs();
-		}
+		Files.createParentDirs(mcpTarget);
 
 		if (isMCPInstalled(mcpTarget))
 			System.out.println(String.format("MCP is already installed in %s, skipped download and extraction.", mcpTarget));
@@ -42,9 +40,21 @@ public class MCPInstall implements IInstallerAction
 	}
 
 	@Override
+	public boolean isPathValid(File targetFile)
+	{
+		return true;
+	}
+
+	@Override
 	public String getSuccesMessage()
 	{
 		return "Successfully installed BlazeLoader in the MCP environment.";
+	}
+
+	@Override
+	public String getFileErrorMessage(File targetFile)
+	{
+		return "there is no directory here please specify another directory";
 	}
 
 	public boolean isMCPDownloaded(File target)
@@ -101,5 +111,11 @@ public class MCPInstall implements IInstallerAction
 		mcpZip.delete();
 
 		return true;
+	}
+
+	public boolean downloadBL(File target)
+	{
+
+		return false;
 	}
 }

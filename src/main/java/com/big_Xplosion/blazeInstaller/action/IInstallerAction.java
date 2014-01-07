@@ -5,6 +5,8 @@ import java.io.IOException;
 
 public interface IInstallerAction
 {
-	public boolean install(File file) throws IOException;
+	public boolean install(File targetFile) throws IOException;
+	public boolean isPathValid(File targetFile);
 	public String getSuccesMessage();
+	public String getFileErrorMessage(File targetFile);
 }

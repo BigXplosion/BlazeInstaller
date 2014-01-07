@@ -9,6 +9,7 @@ import java.util.List;
 
 import argo.jdom.JsonNode;
 
+import com.big_Xplosion.blazeInstaller.action.InstallType;
 import com.big_Xplosion.blazeInstaller.lib.LibURL;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;

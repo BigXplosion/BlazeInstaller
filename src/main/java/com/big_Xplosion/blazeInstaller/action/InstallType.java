@@ -1,17 +1,14 @@
-package com.big_Xplosion.blazeInstaller.util;
+package com.big_Xplosion.blazeInstaller.action;
 
 import java.io.File;
 import java.io.IOException;
 
-import com.big_Xplosion.blazeInstaller.action.ClientInstall;
-import com.big_Xplosion.blazeInstaller.action.IInstallerAction;
-import com.big_Xplosion.blazeInstaller.action.MCPInstall;
 import com.google.common.base.Throwables;
 
 public enum InstallType
 {
-	CLIENT("Install Client", "Install a new profile on the minecraft launcher.", ClientInstall.class),
-	MCP("Install MCP", "install BlazeLoader in a MCP environlent (only for developers).", MCPInstall.class);
+	CLIENT("Client-Install", "Install a new profile on the minecraft launcher.", ClientInstall.class),
+	MCP("MCP-Install", "install BlazeLoader in a MCP environlent (only for developers).", MCPInstall.class);
 
 	private String name;
 	private String desc;
@@ -37,13 +34,28 @@ public enum InstallType
 		return actionClass.install(targetFile);
 	}
 
-	public String getTabName()
+	public boolean isPathValid(File targetFile)
 	{
-		return name;		//For UI later
+		return actionClass.isPathValid(targetFile);
+	}
+
+	public String getSuccessMessage()
+	{
+		return actionClass.getSuccesMessage();
+	}
+
+	public String getFileError(File targetFile)
+	{
+		return actionClass.getFileErrorMessage(targetFile);
+	}
+
+	public String getButtonName()
+	{
+		return name;
 	}
 
 	public String getDesc()
 	{
-		return desc;		//For UI later
+		return desc;
 	}
 }
