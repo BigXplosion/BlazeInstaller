@@ -1,20 +1,19 @@
 package com.big_Xplosion.blazeInstaller.util;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.List;
-
 import argo.jdom.JsonNode;
-
 import com.big_Xplosion.blazeInstaller.action.InstallType;
 import com.big_Xplosion.blazeInstaller.lib.LibURL;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.List;
 
 public class DownloadUtil
 {
@@ -60,7 +59,7 @@ public class DownloadUtil
 
 	public static boolean downloadFile(String name, File path, String downloadUrl)
 	{
-		System.out.println(String.format("Attempt at downloading file: %s", name));
+		System.out.println(String.format("Downloading package: %s", name));
 
 		try
 		{
@@ -78,7 +77,7 @@ public class DownloadUtil
 				}
 			};
 
-			Files.copy(urlSupplier, path);
+			Files.copy(urlSupplier, new File(path, downloadUrl.substring(downloadUrl.lastIndexOf("/"), downloadUrl.length())));
 
 			return true;
 		}

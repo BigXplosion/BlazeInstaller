@@ -1,8 +1,5 @@
 package com.big_Xplosion.blazeInstaller.action;
 
-import java.io.File;
-import java.io.IOException;
-
 import com.big_Xplosion.blazeInstaller.lib.LibNames;
 import com.big_Xplosion.blazeInstaller.lib.LibURL;
 import com.big_Xplosion.blazeInstaller.unresolved.UnresolvedString;
@@ -11,7 +8,10 @@ import com.big_Xplosion.blazeInstaller.util.DownloadUtil;
 import com.big_Xplosion.blazeInstaller.util.ExtractUtil;
 import com.google.common.io.Files;
 
-public class MCPInstall implements IInstallerAction
+import java.io.File;
+import java.io.IOException;
+
+public class MCPInstall implements com.big_Xplosion.blazeInstaller.action.IInstallerAction
 {
 	@Override
 	public boolean install(File mcpTarget) throws IOException

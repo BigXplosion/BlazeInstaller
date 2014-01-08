@@ -1,14 +1,14 @@
 package com.big_Xplosion.blazeInstaller.util;
 
+import com.google.common.io.Files;
+import com.google.common.io.InputSupplier;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-
-import com.google.common.io.Files;
-import com.google.common.io.InputSupplier;
 
 public class ExtractUtil
 {
@@ -18,9 +18,14 @@ public class ExtractUtil
 		{
 			ZipFile zipFile = new ZipFile(zip);
 
+            String name = zip.getName();
+            File MCPDir = new File(outputFile, name.substring(0, name.lastIndexOf(".")) + "/");
 			for (Enumeration<? extends ZipEntry> e = zipFile.entries(); e.hasMoreElements();)
 			{
 				ZipEntry entry = e.nextElement();
+
+                if (entry.isDirectory()) continue;
+
 				final InputStream inStream = zipFile.getInputStream(entry);
 
 				InputSupplier<InputStream> supplier = new InputSupplier<InputStream>()
@@ -32,7 +37,9 @@ public class ExtractUtil
 					}
 				};
 
-				Files.copy(supplier, outputFile);
+                File currFile = new File(MCPDir, entry.getName());
+                FileUtils.createDirStructureForFile(currFile);
+				Files.copy(supplier, currFile);
 			}
 
 			return true;
