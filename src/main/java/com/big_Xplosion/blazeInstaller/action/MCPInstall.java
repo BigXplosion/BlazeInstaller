@@ -21,18 +21,20 @@ public class MCPInstall implements IInstallerAction
 		if (isMCPInstalled(mcpTarget))
 			System.out.println(String.format("MCP is already installed in %s, skipped download and extraction.", mcpTarget));
 		else if (isMCPDownloaded(mcpTarget))
+		{
 			if (!unpackMCPZip(mcpTarget))
 				return false;
-			else
-			{
-				if (!downloadMCP(mcpTarget))
-					return false;
+		}
+		else
+		{
+			if (!downloadMCP(mcpTarget))
+				return false;
 
-				if (!unpackMCPZip(mcpTarget))
-					return false;
-			}
+			if (!unpackMCPZip(mcpTarget))
+				return false;
 
-		System.out.println("Successfully downloaded and unpacked MCP");
+			System.out.println("Successfully downloaded and unpacked MCP");
+		}
 
 		return false;
 	}
