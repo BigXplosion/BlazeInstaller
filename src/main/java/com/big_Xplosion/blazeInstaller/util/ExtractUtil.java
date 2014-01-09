@@ -18,13 +18,14 @@ public class ExtractUtil
 		{
 			ZipFile zipFile = new ZipFile(zip);
 
-            String name = zip.getName();
-            File MCPDir = new File(outputFile, name.substring(0, name.lastIndexOf(".")) + "/");
+			String name = zip.getName();
+			File MCPDir = new File(outputFile, name.substring(0, name.lastIndexOf(".")) + "/");
 			for (Enumeration<? extends ZipEntry> e = zipFile.entries(); e.hasMoreElements();)
 			{
 				ZipEntry entry = e.nextElement();
 
-                if (entry.isDirectory()) continue;
+				if (entry.isDirectory())
+					continue;
 
 				final InputStream inStream = zipFile.getInputStream(entry);
 
@@ -37,8 +38,8 @@ public class ExtractUtil
 					}
 				};
 
-                File currFile = new File(MCPDir, entry.getName());
-                FileUtils.createDirStructureForFile(currFile);
+				File currFile = new File(MCPDir, entry.getName());
+				FileUtil.createDirStructureForFile(currFile);
 				Files.copy(supplier, currFile);
 			}
 

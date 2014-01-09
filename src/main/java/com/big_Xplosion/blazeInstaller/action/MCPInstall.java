@@ -11,7 +11,7 @@ import com.google.common.io.Files;
 import java.io.File;
 import java.io.IOException;
 
-public class MCPInstall implements com.big_Xplosion.blazeInstaller.action.IInstallerAction
+public class MCPInstall implements IInstallerAction
 {
 	@Override
 	public boolean install(File mcpTarget) throws IOException
@@ -21,18 +21,16 @@ public class MCPInstall implements com.big_Xplosion.blazeInstaller.action.IInsta
 		if (isMCPInstalled(mcpTarget))
 			System.out.println(String.format("MCP is already installed in %s, skipped download and extraction.", mcpTarget));
 		else if (isMCPDownloaded(mcpTarget))
-		{
 			if (!unpackMCPZip(mcpTarget))
 				return false;
-		}
-		else
-		{
-			if (!downloadMCP(mcpTarget))
-				return false;
+			else
+			{
+				if (!downloadMCP(mcpTarget))
+					return false;
 
-			if (!unpackMCPZip(mcpTarget))
-				return false;
-		}
+				if (!unpackMCPZip(mcpTarget))
+					return false;
+			}
 
 		System.out.println("Successfully downloaded and unpacked MCP");
 

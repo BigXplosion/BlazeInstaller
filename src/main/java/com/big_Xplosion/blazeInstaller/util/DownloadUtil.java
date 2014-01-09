@@ -33,9 +33,9 @@ public class DownloadUtil
 			if (isLibInstalled(libPath))
 				continue;
 
-			if (!libPath.getParentFile().exists() && !libPath.getParentFile().mkdirs()) {
-                System.out.println("Unable to create or find libraries path!");
-            }
+			if (!libPath.getParentFile().exists() && !libPath.getParentFile().mkdirs())
+				System.out.println("Unable to create or find libraries path!");
+
 			String libURL = LibURL.MC_DOWNLOAD_LIB_ROOT_URL;
 			libURL += path;
 
