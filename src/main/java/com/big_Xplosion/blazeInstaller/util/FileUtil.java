@@ -1,7 +1,6 @@
 package com.big_Xplosion.blazeInstaller.util;
 
 import java.io.File;
-import java.util.regex.Pattern;
 
 public class FileUtil
 {
@@ -9,7 +8,7 @@ public class FileUtil
 	{
 		if (!file.exists())
 		{
-			String[] dirs = file.getAbsolutePath().split(Pattern.quote("\\"));
+			String[] dirs = file.getAbsolutePath().split(File.separator);
 			String newFile = "";
 
 			for (int index = 0; index < dirs.length - 1; index++)
