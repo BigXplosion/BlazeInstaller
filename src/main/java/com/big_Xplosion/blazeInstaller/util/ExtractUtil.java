@@ -18,8 +18,6 @@ public class ExtractUtil
 		{
 			ZipFile zipFile = new ZipFile(zip);
 
-			String name = zip.getName();
-			File MCPDir = new File(outputFile, name.substring(0, name.lastIndexOf(".")) + "/");
 			for (Enumeration<? extends ZipEntry> e = zipFile.entries(); e.hasMoreElements();)
 			{
 				ZipEntry entry = e.nextElement();
@@ -38,7 +36,7 @@ public class ExtractUtil
 					}
 				};
 
-				File currFile = new File(MCPDir, entry.getName());
+				File currFile = new File(outputFile, entry.getName());
 				FileUtil.createDirStructureForFile(currFile);
 				Files.copy(supplier, currFile);
 			}
