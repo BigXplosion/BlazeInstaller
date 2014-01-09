@@ -46,7 +46,7 @@ public class MCPInstall implements com.big_Xplosion.blazeInstaller.action.IInsta
 	}
 
 	@Override
-	public String getSuccesMessage()
+	public String getSuccessMessage()
 	{
 		return "Successfully installed BlazeLoader in the MCP environment.";
 	}

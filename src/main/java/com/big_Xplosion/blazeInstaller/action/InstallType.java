@@ -1,9 +1,9 @@
 package com.big_Xplosion.blazeInstaller.action;
 
+import com.google.common.base.Throwables;
+
 import java.io.File;
 import java.io.IOException;
-
-import com.google.common.base.Throwables;
 
 public enum InstallType
 {
@@ -41,7 +41,7 @@ public enum InstallType
 
 	public String getSuccessMessage()
 	{
-		return actionClass.getSuccesMessage();
+		return actionClass.getSuccessMessage();
 	}
 
 	public String getFileError(File targetFile)

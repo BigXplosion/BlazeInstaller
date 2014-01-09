@@ -18,7 +18,7 @@ public class ClientInstall implements IInstallerAction
 	}
 
 	@Override
-	public String getSuccesMessage()
+	public String getSuccessMessage()
 	{
 		return "Successfully installed BlazeLoader.";
 	}
