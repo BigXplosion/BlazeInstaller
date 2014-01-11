@@ -18,15 +18,41 @@ import com.google.common.io.Files;
 
 public class MCPInstall implements IInstallerAction
 {
+	private VersionResolver versionResolver;
+
 	@Override
 	public boolean install(File mcpTarget) throws IOException
 	{
 		Files.createParentDirs(mcpTarget);
 
+		if (isBLInstalled(mcpTarget))
+			System.out.println("BlazeLoader is already installed, skipping donwloading and exctracting.");
+		else if (isBLDownloaded(mcpTarget))
+		{
+			System.out.println("BlazeLoader is already donwloaded, skipping.");
+
+			if (!unpackBLZip(mcpTarget))
+				return false;
+		}
+		else
+		{
+			if (!downloadBL(mcpTarget))
+				return false;
+
+			if (!unpackBLZip(mcpTarget))
+				return false;
+
+			System.out.println("SuccessFully donwloaded and unpacked BlazeLoader-src");
+		}
+
+		versionResolver = new VersionResolver(new File(new File(mcpTarget, "BlazeLoader"), "BLVersion.properties"));
+
 		if (isMCPInstalled(mcpTarget))
-			System.out.println(String.format("MCP is already installed in %s, skipped download and extraction.", mcpTarget));
+			System.out.println(String.format("MCP is already installed, skipped download and extraction.", mcpTarget));
 		else if (isMCPDownloaded(mcpTarget))
 		{
+			System.out.println("MCP is already donwloaded, skipping.");
+
 			if (!unpackMCPZip(mcpTarget))
 				return false;
 		}
@@ -40,14 +66,6 @@ public class MCPInstall implements IInstallerAction
 
 			System.out.println("Successfully downloaded and unpacked MCP");
 		}
-
-		if (!downloadBL(mcpTarget))
-			return false;
-
-		if (!unpackBLZip(mcpTarget))
-			return false;
-
-		System.out.println("SuccessFully donwloaded and unpacked BlazeLoader-src");
 
 		return true;
 	}
@@ -70,11 +88,11 @@ public class MCPInstall implements IInstallerAction
 		return "there is no directory here please specify another directory";
 	}
 
-	public boolean isMCPDownloaded(File targetFile)
+	private boolean isMCPDownloaded(File targetFile)
 	{
 		if (targetFile.isDirectory())
 		{
-			File zipFile = new File(targetFile, new UnresolvedString(LibNames.MCP_NAME, new VersionResolver()).call() + ".zip");
+			File zipFile = new File(targetFile, new UnresolvedString(LibNames.MCP_NAME, versionResolver).call() + ".zip");
 
 			if (zipFile.exists())
 				return true;
@@ -83,11 +101,11 @@ public class MCPInstall implements IInstallerAction
 		return false;
 	}
 
-	public boolean isMCPInstalled(File targetFile)
+	private boolean isMCPInstalled(File targetFile)
 	{
 		if (targetFile.isDirectory())
 		{
-			File reobfFile = new File(targetFile, "/reobfuscate_srg.sh");
+			File reobfFile = new File(targetFile, "reobfuscate_srg.sh");
 
 			if (reobfFile.exists())
 				return true;
@@ -96,22 +114,35 @@ public class MCPInstall implements IInstallerAction
 		return false;
 	}
 
-	public boolean isBLDownloaded(File targetFile)
+	private boolean isBLDownloaded(File targetFile)
 	{
 		if (targetFile.isDirectory())
 		{
 			File blZip = new File(targetFile, "BlazeLoader.zip");
 
-			if (!blZip.exists())
+			if (blZip.exists())
 				return true;
 		}
 
 		return false;
 	}
 
-	public boolean downloadMCP(File targetFile)
+	private boolean isBLInstalled(File targetFile)
 	{
-		String mcpURL = new UnresolvedString(LibURL.MCP_DOWNLOAD_URL, new VersionResolver()).call();
+		if (targetFile.exists())
+		{
+			File blDir = new File(new File(targetFile, "BlazeLoader"), "BLVersion.properties");
+
+			if (blDir.exists())
+				return true;
+		}
+
+		return false;
+	}
+
+	private boolean downloadMCP(File targetFile)
+	{
+		String mcpURL = new UnresolvedString(LibURL.MCP_DOWNLOAD_URL, versionResolver).call();
 
 		if (!DownloadUtil.downloadFile("MCP", targetFile, mcpURL))
 		{
@@ -122,10 +153,10 @@ public class MCPInstall implements IInstallerAction
 		return true;
 	}
 
-	public boolean unpackMCPZip(File mcpTarget)
+	private boolean unpackMCPZip(File mcpTarget)
 	{
 		System.out.println("Extracting MCP.");
-		String zipName = new UnresolvedString(LibNames.MCP_NAME, new VersionResolver()).call() + ".zip";
+		String zipName = new UnresolvedString(LibNames.MCP_NAME, versionResolver).call() + ".zip";
 		File mcpZip = new File(mcpTarget, zipName);
 
 		if (!ExtractUtil.extractZip(mcpZip, mcpTarget))
@@ -139,8 +170,10 @@ public class MCPInstall implements IInstallerAction
 		return true;
 	}
 
-	public boolean downloadBL(File targetFile) throws IOException
+	private boolean downloadBL(File targetFile) throws IOException
 	{
+		// TODO: change when we have a proper way of doing it.
+
 		URL versionURL = new URL(""); // Put URL here
 		BufferedReader reader = new BufferedReader(new InputStreamReader(versionURL.openStream()));
 		String line;
@@ -148,10 +181,12 @@ public class MCPInstall implements IInstallerAction
 
 		while ((line = reader.readLine()) != null)
 		{
-			if (line.isEmpty() || line.startsWith("#") || line == null)					//This is just a test case it probably won't be like this.
+			if (line.isEmpty() || line.startsWith("#") || line == null)
 				continue;
 
 			parts = Iterables.toArray(Splitter.on('|').split(line), String.class);
+
+			break;
 		}
 
 		if (!DownloadUtil.downloadFile("BlazeLoader-src", new File(targetFile, "BlazeLoader.zip"), parts[2]))
@@ -163,7 +198,7 @@ public class MCPInstall implements IInstallerAction
 		return true;
 	}
 
-	public boolean unpackBLZip(File targetFile)
+	private boolean unpackBLZip(File targetFile)
 	{
 		File blZip = new File(targetFile, "BlazeLoader.zip");
 
