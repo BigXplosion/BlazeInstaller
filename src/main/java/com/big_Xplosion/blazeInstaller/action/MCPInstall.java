@@ -13,6 +13,7 @@ import com.big_Xplosion.blazeInstaller.unresolved.resolve.VersionResolver;
 import com.big_Xplosion.blazeInstaller.util.DownloadUtil;
 import com.big_Xplosion.blazeInstaller.util.ExtractUtil;
 import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.io.Files;
 
@@ -181,13 +182,15 @@ public class MCPInstall implements IInstallerAction
 
 		while ((line = reader.readLine()) != null)
 		{
-			if (line.isEmpty() || line.startsWith("#") || line == null)
+			if (line.startsWith("#") || Strings.isNullOrEmpty(line))
 				continue;
 
 			parts = Iterables.toArray(Splitter.on('|').split(line), String.class);
 
 			break;
 		}
+
+		reader.close();
 
 		if (!DownloadUtil.downloadFile("BlazeLoader-src", new File(targetFile, "BlazeLoader.zip"), parts[2]))
 		{
