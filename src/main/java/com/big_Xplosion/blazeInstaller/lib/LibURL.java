@@ -15,6 +15,7 @@ public class LibURL
 	public static final String MC_DOWNLOAD_SERVER_JAR_URL = MC_DOWNLOAD_VERSION_URL + "minecraft_server.{MC_VERSION}.jar";
 
 	public static final String MC_ASSET_INDEX_URL = MC_INDEX_URL + "{ASSET_INDEX}.json";
+	public static final String MC_JSON_FILE_URL = MC_DOWNLOAD_VERSION_URL + "{MC_VERSION}.json";
 
 	public static final String MCP_DOWNLOAD_URL = "http://mcp.ocean-labs.de/files/archive/mcp{MCP_VERSION}.zip";
 }

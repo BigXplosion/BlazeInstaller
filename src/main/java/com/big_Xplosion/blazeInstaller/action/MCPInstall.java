@@ -47,6 +47,14 @@ public class MCPInstall implements IInstallerAction
 		}
 
 		versionResolver = new VersionResolver(new File(new File(mcpTarget, "BlazeLoader"), "BLVersion.properties"));
+		File jarsDir = new File(mcpTarget, "jars");
+		File libDir = new File(jarsDir, "libraries");
+		File versionDir = new File(new File(jarsDir, "versions"), new UnresolvedString("{MC_VERSION}", versionResolver).call());
+		Files.createParentDirs(libDir);
+		Files.createParentDirs(versionDir);
+
+		if (!checkVersionFiles(versionDir))
+			return false;
 
 		if (isMCPInstalled(mcpTarget))
 			System.out.println(String.format("MCP is already installed, skipped download and extraction.", mcpTarget));
@@ -215,4 +223,31 @@ public class MCPInstall implements IInstallerAction
 
 		return true;
 	}
+
+	private boolean checkVersionFiles(File versionTarget)
+	{
+		File jarFile = new File(versionTarget, new UnresolvedString("{MC_VERSION}.jar", versionResolver).call());
+		File jsonFile = new File(versionTarget, new UnresolvedString("{MC_VERSION}.json", versionResolver).call());
+
+		if (!jarFile.exists())
+		{
+			if (!DownloadUtil.downloadFile(new UnresolvedString("{MC_VERSION}.jar", versionResolver).call(), jarFile, new UnresolvedString(LibURL.MC_DOWNLOAD_JAR_URL, versionResolver).call()))
+			{
+				System.out.println(String.format("Failed donwloading the minecraft %s.jar, please try again and if it still doesn't work contact a dev.", new UnresolvedString("{MC_VERSION}", versionResolver).call()));
+				return false;
+			}
+		}
+
+		if (!jsonFile.exists())
+		{
+			if (!DownloadUtil.downloadFile(new UnresolvedString("{MC_VERSION}.json", versionResolver).call(), jsonFile, new UnresolvedString(LibURL.MC_JSON_FILE_URL, versionResolver).call()))
+			{
+				System.out.println(String.format("Failed donwloading the minecraft %s.json, please try again and if it still doesn't work contact a dev.", new UnresolvedString("{MC_VERSION}", versionResolver).call()));
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 }

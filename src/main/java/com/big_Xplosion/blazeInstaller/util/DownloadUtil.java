@@ -45,7 +45,7 @@ public class DownloadUtil
 				else if (type.equals(InstallType.MCP) && libURL.startsWith(LibURL.MC_DOWNLOAD_LIB_ROOT_URL))
 					System.out.println(String.format("failed to download %s, mcp will download these later.", name));
 				else
-					System.out.println(String.format("failed to download %s, try again and if it still fails try contacting an author.", name));
+					System.out.println(String.format("failed to download %s, try again and if it still fails contact a dev.", name));
 			else
 				System.out.println(String.format("Donwloaded library: %s", name));
 		}
