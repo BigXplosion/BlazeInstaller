@@ -21,6 +21,7 @@ public class MCPInstall implements IInstallerAction
 {
 	private VersionResolver versionResolver;
 	private String mcVersion;
+	private File blRoot;
 
 	@Override
 	public boolean install(File mcpTarget) throws IOException
@@ -47,11 +48,13 @@ public class MCPInstall implements IInstallerAction
 			System.out.println("SuccessFully donwloaded and unpacked BlazeLoader-src");
 		}
 
-		versionResolver = new VersionResolver(new File(new File(mcpTarget, "BlazeLoader"), "BLVersion.properties"));
+		blRoot = new File(mcpTarget, "BlazeLoader");
+		versionResolver = new VersionResolver(new File(blRoot, "BLVersion.properties"));
 		mcVersion = new UnresolvedString("{MC_VERSION}", versionResolver).call();
 		File jarsDir = new File(mcpTarget, "jars");
 		File libDir = new File(jarsDir, "libraries");
 		File versionDir = new File(new File(jarsDir, "versions"), mcVersion);
+		File devJson = new File(new File(blRoot, "json"), mcVersion + "-dev.json");
 		Files.createParentDirs(libDir);
 		Files.createParentDirs(versionDir);
 
@@ -142,7 +145,7 @@ public class MCPInstall implements IInstallerAction
 	{
 		if (targetFile.exists())
 		{
-			File blDir = new File(new File(targetFile, "BlazeLoader"), "BLVersion.properties");
+			File blDir = new File(blRoot, "BLVersion.properties");
 
 			if (blDir.exists())
 				return true;
