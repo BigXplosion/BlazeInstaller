@@ -228,21 +228,24 @@ public class MCPInstall implements IInstallerAction
 	{
 		File jarFile = new File(versionTarget, new UnresolvedString("{MC_VERSION}.jar", versionResolver).call());
 		File jsonFile = new File(versionTarget, new UnresolvedString("{MC_VERSION}.json", versionResolver).call());
+		String mcVersion = new UnresolvedString("{MC_VERSION}.jar", versionResolver).call();
+		String mcJar = mcVersion + ".jar";
+		String mcJson = mcVersion + ".json";
 
 		if (!jarFile.exists())
 		{
-			if (!DownloadUtil.downloadFile(new UnresolvedString("{MC_VERSION}.jar", versionResolver).call(), jarFile, new UnresolvedString(LibURL.MC_DOWNLOAD_JAR_URL, versionResolver).call()))
+			if (!DownloadUtil.downloadFile(mcJar, jarFile, new UnresolvedString(LibURL.MC_DOWNLOAD_JAR_URL, versionResolver).call()))
 			{
-				System.out.println(String.format("Failed donwloading the minecraft %s.jar, please try again and if it still doesn't work contact a dev.", new UnresolvedString("{MC_VERSION}", versionResolver).call()));
+				System.out.println(String.format("Failed donwloading the minecraft %s, please try again and if it still doesn't work contact a dev.", mcJar));
 				return false;
 			}
 		}
 
 		if (!jsonFile.exists())
 		{
-			if (!DownloadUtil.downloadFile(new UnresolvedString("{MC_VERSION}.json", versionResolver).call(), jsonFile, new UnresolvedString(LibURL.MC_JSON_FILE_URL, versionResolver).call()))
+			if (!DownloadUtil.downloadFile(mcJson, jsonFile, new UnresolvedString(LibURL.MC_JSON_FILE_URL, versionResolver).call()))
 			{
-				System.out.println(String.format("Failed donwloading the minecraft %s.json, please try again and if it still doesn't work contact a dev.", new UnresolvedString("{MC_VERSION}", versionResolver).call()));
+				System.out.println(String.format("Failed donwloading the minecraft %s, please try again and if it still doesn't work contact a dev.", mcJson));
 				return false;
 			}
 		}
