@@ -44,7 +44,7 @@ public class VersionResolver implements IResolver
 				if (Strings.isNullOrEmpty(line) || line.startsWith("#"))
 					continue;
 
-				String[] parts = Iterables.toArray(Splitter.on('=').split(line), String.class);
+				String[] parts = Iterables.toArray(Splitter.on('=').limit(2).split(line), String.class);
 				versions.put(parts[0].toLowerCase(), parts[1]);
 			}
 
