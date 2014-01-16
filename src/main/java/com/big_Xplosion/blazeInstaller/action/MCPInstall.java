@@ -20,6 +20,7 @@ import com.google.common.io.Files;
 public class MCPInstall implements IInstallerAction
 {
 	private VersionResolver versionResolver;
+	private String mcVersion;
 
 	@Override
 	public boolean install(File mcpTarget) throws IOException
@@ -47,9 +48,10 @@ public class MCPInstall implements IInstallerAction
 		}
 
 		versionResolver = new VersionResolver(new File(new File(mcpTarget, "BlazeLoader"), "BLVersion.properties"));
+		mcVersion = new UnresolvedString("{MC_VERSION}", versionResolver).call();
 		File jarsDir = new File(mcpTarget, "jars");
 		File libDir = new File(jarsDir, "libraries");
-		File versionDir = new File(new File(jarsDir, "versions"), new UnresolvedString("{MC_VERSION}", versionResolver).call());
+		File versionDir = new File(new File(jarsDir, "versions"), mcVersion);
 		Files.createParentDirs(libDir);
 		Files.createParentDirs(versionDir);
 
@@ -226,11 +228,10 @@ public class MCPInstall implements IInstallerAction
 
 	private boolean checkVersionFiles(File versionTarget)
 	{
-		File jarFile = new File(versionTarget, new UnresolvedString("{MC_VERSION}.jar", versionResolver).call());
-		File jsonFile = new File(versionTarget, new UnresolvedString("{MC_VERSION}.json", versionResolver).call());
-		String mcVersion = new UnresolvedString("{MC_VERSION}.jar", versionResolver).call();
 		String mcJar = mcVersion + ".jar";
 		String mcJson = mcVersion + ".json";
+		File jarFile = new File(versionTarget, mcJar);
+		File jsonFile = new File(versionTarget, mcJson);
 
 		if (!jarFile.exists())
 		{
