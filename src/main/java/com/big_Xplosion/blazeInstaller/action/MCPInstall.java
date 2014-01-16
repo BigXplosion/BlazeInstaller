@@ -48,19 +48,6 @@ public class MCPInstall implements IInstallerAction
 			System.out.println("SuccessFully donwloaded and unpacked BlazeLoader-src");
 		}
 
-		blRoot = new File(mcpTarget, "BlazeLoader");
-		versionResolver = new VersionResolver(new File(blRoot, "BLVersion.properties"));
-		mcVersion = new UnresolvedString("{MC_VERSION}", versionResolver).call();
-		File jarsDir = new File(mcpTarget, "jars");
-		File libDir = new File(jarsDir, "libraries");
-		File versionDir = new File(new File(jarsDir, "versions"), mcVersion);
-		File devJson = new File(new File(blRoot, "json"), mcVersion + "-dev.json");
-		Files.createParentDirs(libDir);
-		Files.createParentDirs(versionDir);
-
-		if (!checkVersionFiles(versionDir))
-			return false;
-
 		if (isMCPInstalled(mcpTarget))
 			System.out.println(String.format("MCP is already installed, skipped download and extraction.", mcpTarget));
 		else if (isMCPDownloaded(mcpTarget))
@@ -80,6 +67,19 @@ public class MCPInstall implements IInstallerAction
 
 			System.out.println("Successfully downloaded and unpacked MCP");
 		}
+
+		blRoot = new File(mcpTarget, "BlazeLoader");
+		versionResolver = new VersionResolver(new File(blRoot, "BLVersion.properties"));
+		mcVersion = new UnresolvedString("{MC_VERSION}", versionResolver).call();
+		File jarsDir = new File(mcpTarget, "jars");
+		File libDir = new File(jarsDir, "libraries");
+		File versionDir = new File(new File(jarsDir, "versions"), mcVersion);
+		File devJson = new File(new File(blRoot, "json"), mcVersion + "-dev.json");
+		Files.createParentDirs(libDir);
+		Files.createParentDirs(versionDir);
+
+		if (!checkVersionFiles(versionDir))
+			return false;
 
 		return true;
 	}
