@@ -17,7 +17,7 @@ import java.util.List;
 
 public class DownloadUtil
 {
-	public static void downLoadLibraries(InstallType type, File libDir, List<JsonNode> libs)
+	public static void downLoadLibraries(InstallType type, File libDir, List<JsonNode> libs, List<JsonNode> failed)
 	{
 		for (JsonNode lib : libs)
 		{
@@ -36,16 +36,27 @@ public class DownloadUtil
 			if (!libPath.getParentFile().exists() && !libPath.getParentFile().mkdirs())
 				System.out.println("Unable to create or find libraries path!");
 
-			String libURL = LibURL.MC_DOWNLOAD_LIB_ROOT_URL;
-			libURL += path;
+			String libURL;
+
+			if (lib.getStringValue("url") != null)
+				libURL = lib.getStringValue("url");
+			else
+			{
+				libURL = LibURL.MC_DOWNLOAD_LIB_ROOT_URL;
+				libURL += path;
+			}
 
 			if (!downloadFile(name, libPath, libURL))
+			{
 				if (type.equals(InstallType.CLIENT) && libURL.startsWith(LibURL.MC_DOWNLOAD_LIB_ROOT_URL))
 					System.out.println(String.format("failed to download %s, minecraft launcher will download these on the next run.", name));
 				else if (type.equals(InstallType.MCP) && libURL.startsWith(LibURL.MC_DOWNLOAD_LIB_ROOT_URL))
 					System.out.println(String.format("failed to download %s, mcp will download these later.", name));
 				else
 					System.out.println(String.format("failed to download %s, try again and if it still fails contact a dev.", name));
+
+				failed.add(lib);
+			}
 			else
 				System.out.println(String.format("Donwloaded library: %s", name));
 		}

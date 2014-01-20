@@ -8,6 +8,8 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 import argo.jdom.JdomParser;
 import argo.jdom.JsonNode;
 import argo.jdom.JsonRootNode;
@@ -18,9 +20,11 @@ import com.big_Xplosion.blazeInstaller.unresolved.UnresolvedString;
 import com.big_Xplosion.blazeInstaller.unresolved.resolve.VersionResolver;
 import com.big_Xplosion.blazeInstaller.util.DownloadUtil;
 import com.big_Xplosion.blazeInstaller.util.ExtractUtil;
+import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 
 public class MCPInstall implements IInstallerAction
@@ -83,6 +87,8 @@ public class MCPInstall implements IInstallerAction
 		File devJson = new File(new File(blRoot, "json"), mcVersion + "-dev.json");
 		Files.createParentDirs(libDir);
 		Files.createParentDirs(versionDir);
+
+		downloadLibraries(libDir, devJson);
 
 		if (!checkVersionFiles(versionDir))
 			return false;
@@ -263,10 +269,11 @@ public class MCPInstall implements IInstallerAction
 		return true;
 	}
 
-	private boolean donwloadLibraries(File libTarget, File devJson)
+	private void downloadLibraries(File libTarget, File devJson)
 	{
 		JdomParser parser = new JdomParser();
 		List<JsonNode> libraries = null;
+		List<JsonNode> failed = Lists.newArrayList();
 
 		try
 		{
@@ -276,15 +283,25 @@ public class MCPInstall implements IInstallerAction
 		catch (Exception e)
 		{
 			e.printStackTrace();
+			return;
 		}
 
-		checkInstalledLibraries(libTarget, libraries);
+		DownloadUtil.downLoadLibraries(InstallType.MCP, libTarget, libraries, failed);
 
-		return true;
-	}
+		if (failed.size() > 0)
+		{
+			List<JsonNode> problems = Lists.newArrayList();
 
-	private void checkInstalledLibraries(File libTarget, List<JsonNode> libraries)
-	{
+			for (JsonNode fail : failed)
+			{
+				if (fail.getBooleanValue("mcpdownload") == null || fail.getBooleanValue("mcpdownload"))
+					continue;
+				else
+					problems.add(fail);
+			}
 
+			if (problems.size() > 0)
+				JOptionPane.showMessageDialog(null, String.format("failed to download %s. These files aren't donwloaded by MCP, you could try again or install them manually.", Joiner.on(", ").join(problems)), "ERROR", JOptionPane.ERROR_MESSAGE);
+		}
 	}
 }
