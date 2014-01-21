@@ -243,12 +243,14 @@ public class MCPInstall implements IInstallerAction
 		return true;
 	}
 
-	private boolean checkVersionFiles(File versionTarget)
+	private boolean checkVersionFiles(File versionTarget) throws IOException
 	{
 		String mcJar = mcVersion + ".jar";
 		String mcJson = mcVersion + ".json";
 		File jarFile = new File(versionTarget, mcJar);
 		File jsonFile = new File(versionTarget, mcJson);
+		Files.createParentDirs(jarFile);
+		Files.createParentDirs(jsonFile);
 
 		if (!jarFile.exists())
 		{
