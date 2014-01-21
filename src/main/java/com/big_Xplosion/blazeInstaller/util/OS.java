@@ -36,6 +36,11 @@ public enum OS
 		return UNKNOWN;
 	}
 
+	public static String getOSName()
+	{
+		return getCurrentPlatform().osName;
+	}
+
 	public static String getOSVersion()
 	{
 		return System.getProperty("os.version");

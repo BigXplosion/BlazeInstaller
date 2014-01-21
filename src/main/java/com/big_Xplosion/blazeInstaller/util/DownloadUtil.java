@@ -25,7 +25,21 @@ public class DownloadUtil
 			String[] parts = Iterables.toArray(Splitter.on(':').split(name), String.class);
 
 			parts[0] = parts[0].replace('.', '/');
-			String jarName = parts[1] + "-" + parts[2] + ".jar";
+			String jarName = parts[1] + "-" + parts[2];
+
+			if (lib.isNode("natives"))
+			{
+				System.out.println("true 1");
+				JsonNode natives = lib.getNode("natives");
+
+				if (natives.isStringValue(OS.getOSName()))
+				{
+					System.out.println("true 2");
+					jarName += "-" + natives.getStringValue(OS.getOSName());
+				}
+			}
+
+			jarName += ".jar";
 			String path = parts[0] + "/" + parts[1] + "/" + parts[2] + "/" + jarName;
 
 			File libPath = new File(libDir, path.replace('/', File.separatorChar));
