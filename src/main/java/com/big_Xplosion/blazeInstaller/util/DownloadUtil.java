@@ -29,14 +29,10 @@ public class DownloadUtil
 
 			if (lib.isNode("natives"))
 			{
-				System.out.println("true 1");
 				JsonNode natives = lib.getNode("natives");
 
 				if (natives.isStringValue(OS.getOSName()))
-				{
-					System.out.println("true 2");
 					jarName += "-" + natives.getStringValue(OS.getOSName());
-				}
 			}
 
 			jarName += ".jar";
