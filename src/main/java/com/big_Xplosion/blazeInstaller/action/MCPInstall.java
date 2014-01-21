@@ -37,6 +37,8 @@ public class MCPInstall implements IInstallerAction
 	public boolean install(File mcpTarget) throws IOException
 	{
 		Files.createParentDirs(mcpTarget);
+		blRoot = new File(mcpTarget, "BlazeLoader");
+		Files.createParentDirs(blRoot);
 
 		if (isBLInstalled(mcpTarget))
 			System.out.println("BlazeLoader is already installed, skipping donwloading and exctracting.");
@@ -58,6 +60,8 @@ public class MCPInstall implements IInstallerAction
 			System.out.println("SuccessFully donwloaded and unpacked BlazeLoader-src");
 		}
 
+		versionResolver = new VersionResolver(new File(blRoot, "BLVersion.properties"));
+
 		if (isMCPInstalled(mcpTarget))
 			System.out.println(String.format("MCP is already installed, skipped download and extraction.", mcpTarget));
 		else if (isMCPDownloaded(mcpTarget))
@@ -78,8 +82,6 @@ public class MCPInstall implements IInstallerAction
 			System.out.println("Successfully downloaded and unpacked MCP");
 		}
 
-		blRoot = new File(mcpTarget, "BlazeLoader");
-		versionResolver = new VersionResolver(new File(blRoot, "BLVersion.properties"));
 		mcVersion = new UnresolvedString("{MC_VERSION}", versionResolver).call();
 		File jarsDir = new File(mcpTarget, "jars");
 		File libDir = new File(jarsDir, "libraries");
@@ -170,7 +172,7 @@ public class MCPInstall implements IInstallerAction
 	{
 		String mcpURL = new UnresolvedString(LibURL.MCP_DOWNLOAD_URL, versionResolver).call();
 
-		if (!DownloadUtil.downloadFile("MCP", targetFile, mcpURL))
+		if (!DownloadUtil.downloadFile("MCP", targetFile, mcpURL, false))
 		{
 			System.out.println("Failed to download MCP, please try again and if it still doesn't work contact a dev.");
 			return false;
@@ -217,7 +219,7 @@ public class MCPInstall implements IInstallerAction
 
 		reader.close();
 
-		if (!DownloadUtil.downloadFile("BlazeLoader-src", new File(targetFile, "BlazeLoader.zip"), parts[2]))
+		if (!DownloadUtil.downloadFile("BlazeLoader-src", new File(targetFile, "BlazeLoader.zip"), parts[2], false))
 		{
 			System.out.println(String.format("Failed to download the BlazeLoader src version: %s from %s, please try again and if this still doesn't work the site may be down or you can contact a dev.", parts[0], parts[2]));
 			return false;
@@ -250,7 +252,7 @@ public class MCPInstall implements IInstallerAction
 
 		if (!jarFile.exists())
 		{
-			if (!DownloadUtil.downloadFile(mcJar, jarFile, new UnresolvedString(LibURL.MC_DOWNLOAD_JAR_URL, versionResolver).call()))
+			if (!DownloadUtil.downloadFile(mcJar, jarFile, new UnresolvedString(LibURL.MC_DOWNLOAD_JAR_URL, versionResolver).call(), true))
 			{
 				System.out.println(String.format("Failed donwloading the minecraft %s, please try again and if it still doesn't work contact a dev.", mcJar));
 				return false;
@@ -259,7 +261,7 @@ public class MCPInstall implements IInstallerAction
 
 		if (!jsonFile.exists())
 		{
-			if (!DownloadUtil.downloadFile(mcJson, jsonFile, new UnresolvedString(LibURL.MC_JSON_FILE_URL, versionResolver).call()))
+			if (!DownloadUtil.downloadFile(mcJson, jsonFile, new UnresolvedString(LibURL.MC_JSON_FILE_URL, versionResolver).call(), true))
 			{
 				System.out.println(String.format("Failed donwloading the minecraft %s, please try again and if it still doesn't work contact a dev.", mcJson));
 				return false;
@@ -294,7 +296,7 @@ public class MCPInstall implements IInstallerAction
 
 			for (JsonNode fail : failed)
 			{
-				if (fail.getBooleanValue("mcpdownload") == null || fail.getBooleanValue("mcpdownload"))
+				if (!fail.isBooleanValue("mcpdownload") || fail.getBooleanValue("mcpdownload"))
 					continue;
 				else
 					problems.add(fail);

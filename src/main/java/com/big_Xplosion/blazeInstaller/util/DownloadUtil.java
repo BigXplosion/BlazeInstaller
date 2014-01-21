@@ -38,7 +38,7 @@ public class DownloadUtil
 
 			String libURL;
 
-			if (lib.getStringValue("url") != null)
+			if (lib.isStringValue("url"))
 				libURL = lib.getStringValue("url");
 			else
 			{
@@ -46,7 +46,7 @@ public class DownloadUtil
 				libURL += path;
 			}
 
-			if (!downloadFile(name, libPath, libURL))
+			if (!downloadFile(name, libPath, libURL, true))
 			{
 				if (type.equals(InstallType.CLIENT) && libURL.startsWith(LibURL.MC_DOWNLOAD_LIB_ROOT_URL))
 					System.out.println(String.format("failed to download %s, minecraft launcher will download these on the next run.", name));
@@ -70,7 +70,7 @@ public class DownloadUtil
 		return false;
 	}
 
-	public static boolean downloadFile(String name, File path, String downloadUrl)
+	public static boolean downloadFile(String name, File path, String downloadUrl, boolean lib)
 	{
 		System.out.println(String.format("Downloading package: %s", name));
 
@@ -90,7 +90,10 @@ public class DownloadUtil
 				}
 			};
 
-			Files.copy(urlSupplier, new File(path, downloadUrl.substring(downloadUrl.lastIndexOf("/"), downloadUrl.length())));
+			if (lib)
+				Files.copy(urlSupplier, path);
+			else
+				Files.copy(urlSupplier, new File(path, downloadUrl.substring(downloadUrl.lastIndexOf("/"), downloadUrl.length())));
 
 			return true;
 		}
