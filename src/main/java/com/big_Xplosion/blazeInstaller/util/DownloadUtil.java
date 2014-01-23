@@ -39,20 +39,19 @@ public class DownloadUtil
             String path = parts[0] + "/" + parts[1] + "/" + parts[2] + "/" + jarName;
             path = path.replace('/', File.separatorChar);
             File libPath = new File(libDir, path);
+            Files.createParentDirs(libPath);
 
             if (isLibInstalled(libPath))
                 continue;
 
-            File mcLibPath = new File(OS.getMinecraftDir(), path);
+            File mcLibPath = new File(new File(OS.getMinecraftDir(), "libraries"), path);
 
-            if (mcLibPath.exists())
+            if (mcLibPath.isFile())
             {
+                System.out.println("found");
                 Files.copy(mcLibPath, libPath);
                 continue;
             }
-
-            if (!libPath.getParentFile().exists() && !libPath.getParentFile().mkdirs())
-                System.out.println("Unable to create or find libraries path!");
 
             String libURL;
 
@@ -67,7 +66,7 @@ public class DownloadUtil
             if (!downloadFile(name, libPath, libURL, true))
             {
                 if (type.equals(InstallType.CLIENT) && libURL.startsWith(LibURL.MC_DOWNLOAD_LIB_ROOT_URL))
-                    System.out.println(String.format("failed to download %s, minecraft launcher will download these on the next run.", name));
+                    System.out.println(String.format("failed to download %s, Minecraft launcher will download these on the next run.", name));
                 else if (type.equals(InstallType.MCP) && libURL.startsWith(LibURL.MC_DOWNLOAD_LIB_ROOT_URL))
                     System.out.println(String.format("failed to download %s, mcp will download these later.", name));
                 else
@@ -76,7 +75,7 @@ public class DownloadUtil
                 failed.add(lib);
             }
             else
-                System.out.println(String.format("Donwloaded library: %s", name));
+                System.out.println(String.format("Downloaded library: %s", name));
         }
     }
 
