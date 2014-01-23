@@ -12,49 +12,49 @@ import com.google.common.collect.Maps;
 
 public class VersionResolver implements IResolver
 {
-	private File versionFile;
-	private HashMap<String, String> versions;
+    private File versionFile;
+    private HashMap<String, String> versions;
 
-	public VersionResolver(File versionFile)
-	{
-		this.versionFile = versionFile;
-		this.versions = readVersionFile();
-	}
+    public VersionResolver(File versionFile)
+    {
+        this.versionFile = versionFile;
+        this.versions = readVersionFile();
+    }
 
-	@Override
-	public String resolve(String input)
-	{
-		input = input.replace("{MCP_VERSION}", versions.get("mcp"));
-		input = input.replace("{MC_VERSION}", versions.get("mc"));
+    @Override
+    public String resolve(String input)
+    {
+        input = input.replace("{MCP_VERSION}", versions.get("mcp"));
+        input = input.replace("{MC_VERSION}", versions.get("mc"));
 
-		return input;
-	}
+        return input;
+    }
 
-	private HashMap<String, String> readVersionFile()
-	{
-		HashMap<String, String> versions = Maps.newHashMap();
+    private HashMap<String, String> readVersionFile()
+    {
+        HashMap<String, String> versions = Maps.newHashMap();
 
-		try
-		{
-			BufferedReader reader = new BufferedReader(new FileReader(this.versionFile));
-			String line;
+        try
+        {
+            BufferedReader reader = new BufferedReader(new FileReader(this.versionFile));
+            String line;
 
-			while ((line = reader.readLine()) != null)
-			{
-				if (Strings.isNullOrEmpty(line) || line.startsWith("#"))
-					continue;
+            while ((line = reader.readLine()) != null)
+            {
+                if (Strings.isNullOrEmpty(line) || line.startsWith("#"))
+                    continue;
 
-				String[] parts = Iterables.toArray(Splitter.on('=').limit(2).split(line), String.class);
-				versions.put(parts[0].toLowerCase(), parts[1]);
-			}
+                String[] parts = Iterables.toArray(Splitter.on('=').limit(2).split(line), String.class);
+                versions.put(parts[0].toLowerCase(), parts[1]);
+            }
 
-			reader.close();
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
+            reader.close();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
 
-		return versions;
-	}
+        return versions;
+    }
 }

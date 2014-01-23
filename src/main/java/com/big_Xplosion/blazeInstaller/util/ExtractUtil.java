@@ -12,42 +12,42 @@ import java.util.zip.ZipFile;
 
 public class ExtractUtil
 {
-	public static boolean extractZip(File zip, File outputFile)
-	{
-		try
-		{
-			ZipFile zipFile = new ZipFile(zip);
+    public static boolean extractZip(File zip, File outputFile)
+    {
+        try
+        {
+            ZipFile zipFile = new ZipFile(zip);
 
-			for (Enumeration<? extends ZipEntry> e = zipFile.entries(); e.hasMoreElements();)
-			{
-				ZipEntry entry = e.nextElement();
+            for (Enumeration<? extends ZipEntry> e = zipFile.entries(); e.hasMoreElements(); )
+            {
+                ZipEntry entry = e.nextElement();
 
-				if (entry.isDirectory())
-					continue;
+                if (entry.isDirectory())
+                    continue;
 
-				final InputStream inStream = zipFile.getInputStream(entry);
+                final InputStream inStream = zipFile.getInputStream(entry);
 
-				InputSupplier<InputStream> supplier = new InputSupplier<InputStream>()
-				{
-					@Override
-					public InputStream getInput() throws IOException
-					{
-						return inStream;
-					}
-				};
+                InputSupplier<InputStream> supplier = new InputSupplier<InputStream>()
+                {
+                    @Override
+                    public InputStream getInput() throws IOException
+                    {
+                        return inStream;
+                    }
+                };
 
-				File currFile = new File(outputFile, entry.getName());
-				FileUtil.createDirStructureForFile(currFile);
-				Files.copy(supplier, currFile);
-			}
+                File currFile = new File(outputFile, entry.getName());
+                FileUtil.createDirStructureForFile(currFile);
+                Files.copy(supplier, currFile);
+            }
 
-			return true;
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
+            return true;
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
 
-			return false;
-		}
-	}
+            return false;
+        }
+    }
 }

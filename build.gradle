@@ -8,16 +8,16 @@ targetCompatibility = '1.6'
 sourceCompatibility = '1.6'
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
-	compile 'com.google.guava:guava:14.0'
-	compile 'net.sourceforge.argo:argo:3.7'
+    compile 'com.google.guava:guava:14.0'
+    compile 'net.sourceforge.argo:argo:3.7'
 }
 
 jar {
-	manifest {
-		attributes 'Main-Class': 'com.big_Xplosion.blazeInstaller.BlazeInstaller', 'version': version
-	}
+    manifest {
+        attributes 'Main-Class': 'com.big_Xplosion.blazeInstaller.BlazeInstaller', 'version': version
+    }
 }

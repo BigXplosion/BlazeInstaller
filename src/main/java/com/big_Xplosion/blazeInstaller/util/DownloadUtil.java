@@ -17,101 +17,109 @@ import java.util.List;
 
 public class DownloadUtil
 {
-	public static void downLoadLibraries(InstallType type, File libDir, List<JsonNode> libs, List<JsonNode> failed)
-	{
-		for (JsonNode lib : libs)
-		{
-			String name = lib.getStringValue("name");
-			String[] parts = Iterables.toArray(Splitter.on(':').split(name), String.class);
+    public static void downLoadLibraries(InstallType type, File libDir, List<JsonNode> libs, List<JsonNode> failed) throws IOException
+    {
+        for (JsonNode lib : libs)
+        {
+            String name = lib.getStringValue("name");
+            String[] parts = Iterables.toArray(Splitter.on(':').split(name), String.class);
 
-			parts[0] = parts[0].replace('.', '/');
-			String jarName = parts[1] + "-" + parts[2];
+            parts[0] = parts[0].replace('.', '/');
+            String jarName = parts[1] + "-" + parts[2];
 
-			if (lib.isNode("natives"))
-			{
-				JsonNode natives = lib.getNode("natives");
+            if (lib.isNode("natives"))
+            {
+                JsonNode natives = lib.getNode("natives");
 
-				if (natives.isStringValue(OS.getOSName()))
-					jarName += "-" + natives.getStringValue(OS.getOSName());
-			}
+                if (natives.isStringValue(OS.getOSName()))
+                    jarName += "-" + natives.getStringValue(OS.getOSName());
+            }
 
-			jarName += ".jar";
-			String path = parts[0] + "/" + parts[1] + "/" + parts[2] + "/" + jarName;
+            jarName += ".jar";
+            String path = parts[0] + "/" + parts[1] + "/" + parts[2] + "/" + jarName;
+            path = path.replace('/', File.separatorChar);
+            File libPath = new File(libDir, path);
 
-			File libPath = new File(libDir, path.replace('/', File.separatorChar));
+            if (isLibInstalled(libPath))
+                continue;
 
-			if (isLibInstalled(libPath))
-				continue;
+            File mcLibPath = new File(OS.getMinecraftDir(), path);
 
-			if (!libPath.getParentFile().exists() && !libPath.getParentFile().mkdirs())
-				System.out.println("Unable to create or find libraries path!");
+            if (mcLibPath.exists())
+            {
+                Files.copy(mcLibPath, libPath);
+                continue;
+            }
 
-			String libURL;
+            if (!libPath.getParentFile().exists() && !libPath.getParentFile().mkdirs())
+                System.out.println("Unable to create or find libraries path!");
 
-			if (lib.isStringValue("url"))
-				libURL = lib.getStringValue("url");
-			else
-			{
-				libURL = LibURL.MC_DOWNLOAD_LIB_ROOT_URL;
-				libURL += path;
-			}
+            String libURL;
 
-			if (!downloadFile(name, libPath, libURL, true))
-			{
-				if (type.equals(InstallType.CLIENT) && libURL.startsWith(LibURL.MC_DOWNLOAD_LIB_ROOT_URL))
-					System.out.println(String.format("failed to download %s, minecraft launcher will download these on the next run.", name));
-				else if (type.equals(InstallType.MCP) && libURL.startsWith(LibURL.MC_DOWNLOAD_LIB_ROOT_URL))
-					System.out.println(String.format("failed to download %s, mcp will download these later.", name));
-				else
-					System.out.println(String.format("failed to download %s, try again and if it still fails contact a dev.", name));
+            if (lib.isStringValue("url"))
+                libURL = lib.getStringValue("url");
+            else
+            {
+                libURL = LibURL.MC_DOWNLOAD_LIB_ROOT_URL;
+                libURL += path;
+            }
 
-				failed.add(lib);
-			}
-			else
-				System.out.println(String.format("Donwloaded library: %s", name));
-		}
-	}
+            if (!downloadFile(name, libPath, libURL, true))
+            {
+                if (type.equals(InstallType.CLIENT) && libURL.startsWith(LibURL.MC_DOWNLOAD_LIB_ROOT_URL))
+                    System.out.println(String.format("failed to download %s, minecraft launcher will download these on the next run.", name));
+                else if (type.equals(InstallType.MCP) && libURL.startsWith(LibURL.MC_DOWNLOAD_LIB_ROOT_URL))
+                    System.out.println(String.format("failed to download %s, mcp will download these later.", name));
+                else
+                    System.out.println(String.format("failed to download %s, try again and if it still fails contact a dev.", name));
 
-	public static boolean isLibInstalled(File libJar)
-	{
-		if (libJar.exists())
-			return true;
+                failed.add(lib);
+            }
+            else
+                System.out.println(String.format("Donwloaded library: %s", name));
+        }
+    }
 
-		return false;
-	}
+    public static boolean isLibInstalled(File libJar)
+    {
+        if (libJar.exists())
+            return true;
 
-	public static boolean downloadFile(String name, File path, String downloadUrl, boolean lib)
-	{
-		System.out.println(String.format("Downloading package: %s", name));
+        return false;
+    }
 
-		try
-		{
-			URL url = new URL(downloadUrl);
-			final URLConnection connection = url.openConnection();
-			connection.setConnectTimeout(6000);
-			connection.setReadTimeout(6000);
+    public static boolean downloadFile(String name, File path, String downloadUrl, boolean lib)
+    {
+        System.out.println(String.format("Downloading package: %s", name));
 
-			InputSupplier<InputStream> urlSupplier = new InputSupplier<InputStream>()
-			{
-				@Override
-				public InputStream getInput() throws IOException
-				{
-					return connection.getInputStream();
-				}
-			};
+        try
+        {
+            URL url = new URL(downloadUrl);
+            final URLConnection connection = url.openConnection();
+            connection.setConnectTimeout(5000);
+            connection.setReadTimeout(5000);
 
-			if (lib)
-				Files.copy(urlSupplier, path);
-			else
-				Files.copy(urlSupplier, new File(path, downloadUrl.substring(downloadUrl.lastIndexOf("/"), downloadUrl.length())));
+            InputSupplier<InputStream> urlSupplier = new InputSupplier<InputStream>()
+            {
+                @Override
+                public InputStream getInput() throws IOException
+                {
+                    return connection.getInputStream();
+                }
+            };
 
-			return true;
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
+            if (lib)
+                Files.copy(urlSupplier, path);
+            else
+                Files.copy(urlSupplier, new File(path, downloadUrl.substring(downloadUrl.lastIndexOf("/"), downloadUrl.length())));
 
-			return false;
-		}
-	}
+            return true;
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+
+            return false;
+        }
+    }
 }
