@@ -20,6 +20,7 @@ import com.big_Xplosion.blazeInstaller.unresolved.UnresolvedString;
 import com.big_Xplosion.blazeInstaller.unresolved.resolve.VersionResolver;
 import com.big_Xplosion.blazeInstaller.util.DownloadUtil;
 import com.big_Xplosion.blazeInstaller.util.ExtractUtil;
+import com.big_Xplosion.blazeInstaller.util.OS;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
@@ -247,14 +248,19 @@ public class MCPInstall implements IInstallerAction
     {
         String mcJar = mcVersion + ".jar";
         String mcJson = mcVersion + ".json";
-        File jarFile = new File(versionTarget, mcJar);
+        File mcVersionFile = new File(new File(OS.getMinecraftDir(), "versions"), mcVersion);
+        File mcJarFile = new File(mcVersionFile, mcJar);
+        File mcJsonFile = new File(mcVersionFile, mcJson);
+        File mcpJarFile = new File(versionTarget, mcJar);
         File jsonFile = new File(versionTarget, mcJson);
-        Files.createParentDirs(jarFile);
+        Files.createParentDirs(mcpJarFile);
         Files.createParentDirs(jsonFile);
 
-        if (!jarFile.exists())
+        if (!mcpJarFile.exists())
         {
-            if (!DownloadUtil.downloadFile(mcJar, jarFile, new UnresolvedString(LibURL.MC_DOWNLOAD_JAR_URL, versionResolver).call(), true))
+            if (mcJarFile.exists())
+                Files.copy(mcJarFile, mcpJarFile);
+            else if (!DownloadUtil.downloadFile(mcJar, mcpJarFile, new UnresolvedString(LibURL.MC_DOWNLOAD_JAR_URL, versionResolver).call(), true))
             {
                 System.out.println(String.format("Failed donwloading the minecraft %s, please try again and if it still doesn't work contact a dev.", mcJar));
                 return false;
@@ -263,7 +269,9 @@ public class MCPInstall implements IInstallerAction
 
         if (!jsonFile.exists())
         {
-            if (!DownloadUtil.downloadFile(mcJson, jsonFile, new UnresolvedString(LibURL.MC_JSON_FILE_URL, versionResolver).call(), true))
+            if (mcJsonFile.exists())
+                Files.copy(mcJsonFile, jsonFile);
+            else if (!DownloadUtil.downloadFile(mcJson, jsonFile, new UnresolvedString(LibURL.MC_JSON_FILE_URL, versionResolver).call(), true))
             {
                 System.out.println(String.format("Failed donwloading the minecraft %s, please try again and if it still doesn't work contact a dev.", mcJson));
                 return false;
