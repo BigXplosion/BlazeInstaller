@@ -46,9 +46,8 @@ public class DownloadUtil
 
             File mcLibPath = new File(new File(OS.getMinecraftDir(), "libraries"), path);
 
-            if (mcLibPath.isFile())
+            if (mcLibPath.exists())
             {
-                System.out.println("found");
                 Files.copy(mcLibPath, libPath);
                 continue;
             }
