@@ -14,6 +14,7 @@ repositories {
 dependencies {
     compile 'com.google.guava:guava:14.0'
     compile 'net.sourceforge.argo:argo:3.7'
+    compile 'net.sf.jopt-simple:jopt-simple:4.6'
 }
 
 jar {
