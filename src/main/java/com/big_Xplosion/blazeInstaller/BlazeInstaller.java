@@ -2,7 +2,6 @@ package com.big_Xplosion.blazeInstaller;
 
 import com.big_Xplosion.blazeInstaller.action.InstallType;
 import com.big_Xplosion.blazeInstaller.gui.InstallerPanel;
-import com.big_Xplosion.blazeInstaller.util.OS;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 
@@ -63,7 +62,7 @@ public class BlazeInstaller
 
     private static void launchGui()
     {
-        InstallerPanel panel = new InstallerPanel(OS.getMinecraftDir());
+        InstallerPanel panel = new InstallerPanel(new File(System.getProperty("user.dir")));
         panel.run();
     }
 }

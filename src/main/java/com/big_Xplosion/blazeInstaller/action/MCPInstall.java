@@ -1,19 +1,8 @@
 package com.big_Xplosion.blazeInstaller.action;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.util.List;
-
-import javax.swing.JOptionPane;
-
 import argo.jdom.JdomParser;
 import argo.jdom.JsonNode;
 import argo.jdom.JsonRootNode;
-
 import com.big_Xplosion.blazeInstaller.lib.LibNames;
 import com.big_Xplosion.blazeInstaller.lib.LibURL;
 import com.big_Xplosion.blazeInstaller.unresolved.UnresolvedString;
@@ -22,11 +11,14 @@ import com.big_Xplosion.blazeInstaller.util.DownloadUtil;
 import com.big_Xplosion.blazeInstaller.util.ExtractUtil;
 import com.big_Xplosion.blazeInstaller.util.OS;
 import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
+
+import javax.swing.*;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.List;
 
 public class MCPInstall implements IInstallerAction
 {
@@ -202,7 +194,8 @@ public class MCPInstall implements IInstallerAction
     private boolean downloadBL(File targetFile) throws IOException
     {
         // TODO: change when we have a proper way of doing it.
-
+        //acomputerdog: Why should we make a proper way when we can make github do all the work? :)
+        /*
         URL versionURL = new URL(""); // Put URL here
         BufferedReader reader = new BufferedReader(new InputStreamReader(versionURL.openStream()));
         String line;
@@ -222,7 +215,12 @@ public class MCPInstall implements IInstallerAction
 
         if (!DownloadUtil.downloadFile("BlazeLoader-src", new File(targetFile, "BlazeLoader.zip"), parts[2], false))
         {
-            System.out.println(String.format("Failed to download the BlazeLoader src version: %s from %s, please try again and if this still doesn't work the site may be down or you can contact a dev.", parts[0], parts[2]));
+            System.out.println(String.format("Failed to download the BlazeLoader src version: %s from %s, please try again and if this still doesn't work the site may be down or you can contact a dev.", parts[1], parts[2]));
+
+        */
+        if (!DownloadUtil.downloadFile("BlazeLoader-src", new File(targetFile, "BlazeLoader.zip"), "http://github.com/warriordog/BlazeLoader/archive/master.zip", true))
+        {
+            System.out.println(String.format("Failed to download the BlazeLoader src from %s, please try again and if this still doesn't work the site may be down or you can contact a dev.", "http://github.com/warriordog/BlazeLoader/archive/master.zip"));
             return false;
         }
 
