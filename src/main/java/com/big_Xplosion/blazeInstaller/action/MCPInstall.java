@@ -218,7 +218,7 @@ public class MCPInstall implements IInstallerAction
             System.out.println(String.format("Failed to download the BlazeLoader src version: %s from %s, please try again and if this still doesn't work the site may be down or you can contact a dev.", parts[1], parts[2]));
 
         */
-        if (!DownloadUtil.downloadFile("BlazeLoader-src", new File(targetFile, "BlazeLoader.zip"), "http://github.com/warriordog/BlazeLoader/archive/master.zip", true))
+        if (!DownloadUtil.downloadFile("BlazeLoader-src", new File(targetFile, "BlazeLoader.zip"), "https://github.com/warriordog/BlazeLoader/archive/master.zip", true))
         {
             System.out.println(String.format("Failed to download the BlazeLoader src from %s, please try again and if this still doesn't work the site may be down or you can contact a dev.", "http://github.com/warriordog/BlazeLoader/archive/master.zip"));
             return false;
