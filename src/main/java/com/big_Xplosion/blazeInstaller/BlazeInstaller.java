@@ -20,9 +20,15 @@ public class BlazeInstaller
         OptionSet options = parser.parse(args);
 
         if (options.specs().size() > 0)
+        {
+            System.setProperty("bli.gui", "false");
             handleOptions(options);
+        }
         else
+        {
+            System.setProperty("bli.gui", "true");
             launchGui();
+        }
     }
 
     private static void handleOptions(OptionSet options)
@@ -30,7 +36,6 @@ public class BlazeInstaller
         if (options.has("mcp"))
         {
             File mcp = options.hasArgument("mcp") ? (File) options.valueOf("mcp") : new File(".");
-            System.out.println(mcp.getAbsolutePath());
 
             try
             {
@@ -47,7 +52,6 @@ public class BlazeInstaller
         if (options.has("client"))
         {
             File client = options.hasArgument("client") ? (File) options.valueOf("client") : new File(".");
-            System.out.println(client.getAbsolutePath());
 
             try
             {

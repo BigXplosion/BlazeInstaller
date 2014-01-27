@@ -14,11 +14,12 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 
-import javax.swing.*;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
+
+import static com.big_Xplosion.blazeInstaller.util.MessageUtil.postErrorMessage;
 
 public class MCPInstall implements IInstallerAction
 {
@@ -79,7 +80,7 @@ public class MCPInstall implements IInstallerAction
         File jarsDir = new File(mcpTarget, "jars");
         File libDir = new File(jarsDir, "libraries");
         File versionDir = new File(new File(jarsDir, "versions"), mcVersion);
-        File devJson = new File(new File(blRoot, "json"),String.format("BL-%s-dev.json", mcVersion));
+        File devJson = new File(new File(blRoot, "json"), String.format("BL-%s-dev.json", mcVersion));
         Files.createParentDirs(libDir);
         Files.createParentDirs(versionDir);
 
@@ -167,7 +168,7 @@ public class MCPInstall implements IInstallerAction
 
         if (!DownloadUtil.downloadFile("MCP", targetFile, mcpURL, false))
         {
-            System.out.println("Failed to download MCP, please try again and if it still doesn't work contact a dev.");
+            postErrorMessage("Failed to download MCP, please try again and if it still doesn't work contact a dev.");
             return false;
         }
 
@@ -182,7 +183,7 @@ public class MCPInstall implements IInstallerAction
 
         if (!ExtractUtil.extractZip(mcpZip, mcpTarget))
         {
-            System.out.println("Failed to extract MCP zip file, please try again and if it still doesn't work contact a dev.");
+            postErrorMessage("Failed to extract MCP zip file, please try again and if it still doesn't work contact a dev.");
             return false;
         }
 
@@ -220,7 +221,7 @@ public class MCPInstall implements IInstallerAction
         */
         if (!DownloadUtil.downloadFile("BlazeLoader-src", new File(targetFile, "BlazeLoader.zip"), "https://github.com/warriordog/BlazeLoader/archive/master.zip", true))
         {
-            System.out.println(String.format("Failed to download the BlazeLoader src from %s, please try again and if this still doesn't work the site may be down or you can contact a dev.", "http://github.com/warriordog/BlazeLoader/archive/master.zip"));
+            postErrorMessage(String.format("Failed to download the BlazeLoader src from %s, please try again and if this still doesn't work the site may be down or you can contact a dev.", "http://github.com/warriordog/BlazeLoader/archive/master.zip"));
             return false;
         }
 
@@ -233,7 +234,7 @@ public class MCPInstall implements IInstallerAction
 
         if (!ExtractUtil.extractZip(blZip, targetFile))
         {
-            System.out.println("Failed to extract the BlazeLoader zip, please try again and if it still doesn't work contact a dev.");
+            postErrorMessage("Failed to extract the BlazeLoader zip, please try again and if it still doesn't work contact a dev.");
             return false;
         }
 
@@ -264,7 +265,7 @@ public class MCPInstall implements IInstallerAction
                 Files.copy(mcJarFile, mcpJarFile);
             else if (!DownloadUtil.downloadFile(mcJar, mcpJarFile, new UnresolvedString(LibURL.MC_DOWNLOAD_JAR_URL, versionResolver).call(), true))
             {
-                System.out.println(String.format("Failed donwloading the minecraft %s, please try again and if it still doesn't work contact a dev.", mcJar));
+                postErrorMessage(String.format("Failed donwloading the minecraft %s, please try again and if it still doesn't work contact a dev.", mcJar));
                 return false;
             }
         }
@@ -275,7 +276,7 @@ public class MCPInstall implements IInstallerAction
                 Files.copy(mcJsonFile, jsonFile);
             else if (!DownloadUtil.downloadFile(mcJson, jsonFile, new UnresolvedString(LibURL.MC_JSON_FILE_URL, versionResolver).call(), true))
             {
-                System.out.println(String.format("Failed donwloading the minecraft %s, please try again and if it still doesn't work contact a dev.", mcJson));
+                postErrorMessage(String.format("Failed donwloading the minecraft %s, please try again and if it still doesn't work contact a dev.", mcJson));
                 return false;
             }
         }
@@ -315,7 +316,7 @@ public class MCPInstall implements IInstallerAction
             }
 
             if (problems.size() > 0)
-                JOptionPane.showMessageDialog(null, String.format("failed to download %s. These files aren't donwloaded by MCP, you could try again or install them manually.", Joiner.on(", ").join(problems)), "ERROR", JOptionPane.ERROR_MESSAGE);
+                postErrorMessage(String.format("failed to download %s. These files aren't donwloaded by MCP, you could try again or install them manually.", Joiner.on(", \n").join(problems)));
         }
     }
 }
