@@ -109,7 +109,7 @@ public class DownloadUtil
             if (lib)
                 Files.copy(urlSupplier, path);
             else
-                Files.copy(urlSupplier, new File(path, downloadUrl.substring(downloadUrl.lastIndexOf("/"), downloadUrl.length())));
+                Files.copy(urlSupplier, new File(path, downloadUrl.substring(downloadUrl.lastIndexOf("/"))));
 
             return true;
         }

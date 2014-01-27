@@ -79,7 +79,7 @@ public class MCPInstall implements IInstallerAction
         File jarsDir = new File(mcpTarget, "jars");
         File libDir = new File(jarsDir, "libraries");
         File versionDir = new File(new File(jarsDir, "versions"), mcVersion);
-        File devJson = new File(new File(blRoot, "json"), mcVersion + "-dev.json");
+        File devJson = new File(new File(blRoot, "json"),String.format("BL-%s-dev.json", mcVersion));
         Files.createParentDirs(libDir);
         Files.createParentDirs(versionDir);
 
@@ -227,7 +227,7 @@ public class MCPInstall implements IInstallerAction
         return true;
     }
 
-    private boolean unpackBLZip(File targetFile)
+    private boolean unpackBLZip(File targetFile) throws IOException
     {
         File blZip = new File(targetFile, "BlazeLoader.zip");
 
@@ -238,6 +238,10 @@ public class MCPInstall implements IInstallerAction
         }
 
         blZip.delete();
+
+        File blMaster = new File(targetFile, "BlazeLoader-master");
+        File blDir = new File(targetFile, "BlazeLoader");
+        Files.move(blMaster, blDir);
 
         return true;
     }
