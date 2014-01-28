@@ -9,6 +9,8 @@ import com.big_Xplosion.blazeInstaller.unresolved.UnresolvedString;
 import com.big_Xplosion.blazeInstaller.unresolved.resolve.VersionResolver;
 import com.big_Xplosion.blazeInstaller.util.DownloadUtil;
 import com.big_Xplosion.blazeInstaller.util.ExtractUtil;
+import com.big_Xplosion.blazeInstaller.util.MessageUtil;
+import com.big_Xplosion.blazeInstaller.util.ExecutionUtil;
 import com.big_Xplosion.blazeInstaller.util.OS;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
@@ -87,6 +89,9 @@ public class MCPInstall implements IInstallerAction
         downloadLibraries(libDir, devJson);
 
         if (!checkVersionFiles(versionDir))
+            return false;
+
+        if (!applyAT(mcpTarget))
             return false;
 
         return true;
@@ -318,5 +323,19 @@ public class MCPInstall implements IInstallerAction
             if (problems.size() > 0)
                 postErrorMessage(String.format("failed to download %s. These files aren't donwloaded by MCP, you could try again or install them manually.", Joiner.on(", \n").join(problems)));
         }
+    }
+
+    private boolean applyAT(File mcpTarget)
+    {
+        File bin = new File(blRoot, "bin");
+        bin.mkdir();
+
+        if (!ExecutionUtil.compileJava(mcpTarget, "/BlazeLoader/source/core/net/acomputerdog/BlazeLoader/launcher/BLAccessTransformer.java", "/BlazeLoader/bin", "/jars/libraries/net/minecraft/launchwrapper/1.9/launchwrapper-1.9.jar", "/jars/libraries/org/ow2/asm/asm-debug-all/4.1/asm-debug-all-4.1.jar", "/BlazeLoader/bl_at.cfg"))
+        {
+            MessageUtil.postErrorMessage("Failed to compile the AccessTransformer, are you sure you have the java JDK installed and your path is setup correctly");
+            return false;
+        }
+
+        return true;
     }
 }
