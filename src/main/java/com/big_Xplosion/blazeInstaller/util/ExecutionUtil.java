@@ -49,6 +49,11 @@ public class ExecutionUtil
             while ((line = reader.readLine()) != null)
                 System.out.println(line);
 
+            reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+
+            while ((line = reader.readLine()) != null)
+                System.out.println(line);
+
             reader.close();
 
             return true;

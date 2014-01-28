@@ -48,6 +48,8 @@ public class DownloadUtil
 
             if (mcLibPath.exists())
             {
+                System.out.println(String.format("> %s exists in minecraft environment, copying from %s", jarName, libPath));
+
                 Files.copy(mcLibPath, libPath);
                 continue;
             }
@@ -65,16 +67,14 @@ public class DownloadUtil
             if (!downloadFile(name, libPath, libURL, true))
             {
                 if (type.equals(InstallType.CLIENT) && libURL.startsWith(LibURL.MC_DOWNLOAD_LIB_ROOT_URL))
-                    System.out.println(String.format("failed to download %s, Minecraft launcher will download these on the next run.", name));
+                    System.out.println(String.format("> failed to download %s, Minecraft launcher will download these on the next run.", name));
                 else if (type.equals(InstallType.MCP) && libURL.startsWith(LibURL.MC_DOWNLOAD_LIB_ROOT_URL))
-                    System.out.println(String.format("failed to download %s, mcp will download these later.", name));
-                else
-                    System.out.println(String.format("failed to download %s, try again and if it still fails contact a dev.", name));
+                    System.out.println(String.format("> failed to download %s, mcp will download these later.", name));
 
                 failed.add(lib);
             }
             else
-                System.out.println(String.format("Downloaded library: %s", name));
+                System.out.println(String.format("> Downloaded library: %s", jarName));
         }
     }
 
@@ -88,7 +88,8 @@ public class DownloadUtil
 
     public static boolean downloadFile(String name, File path, String downloadUrl, boolean lib)
     {
-        System.out.println(String.format("Downloading package: %s", name));
+        if (!lib)
+            System.out.println(String.format("> Downloading package: %s", name));
 
         try
         {

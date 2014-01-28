@@ -8,9 +8,8 @@ import com.big_Xplosion.blazeInstaller.lib.LibURL;
 import com.big_Xplosion.blazeInstaller.unresolved.UnresolvedString;
 import com.big_Xplosion.blazeInstaller.unresolved.resolve.VersionResolver;
 import com.big_Xplosion.blazeInstaller.util.DownloadUtil;
-import com.big_Xplosion.blazeInstaller.util.ExtractUtil;
-import com.big_Xplosion.blazeInstaller.util.MessageUtil;
 import com.big_Xplosion.blazeInstaller.util.ExecutionUtil;
+import com.big_Xplosion.blazeInstaller.util.ExtractUtil;
 import com.big_Xplosion.blazeInstaller.util.OS;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
@@ -37,10 +36,10 @@ public class MCPInstall implements IInstallerAction
         Files.createParentDirs(blRoot);
 
         if (isBLInstalled(mcpTarget))
-            System.out.println("BlazeLoader is already installed, skipping donwloading and exctracting.");
+            System.out.println("> BlazeLoader is already installed, skipping donwloading and exctracting.");
         else if (isBLDownloaded(mcpTarget))
         {
-            System.out.println("BlazeLoader is already donwloaded, skipping.");
+            System.out.println("> BlazeLoader is already donwloaded, skipping.");
 
             if (!unpackBLZip(mcpTarget))
                 return false;
@@ -53,16 +52,16 @@ public class MCPInstall implements IInstallerAction
             if (!unpackBLZip(mcpTarget))
                 return false;
 
-            System.out.println("SuccessFully donwloaded and unpacked BlazeLoader-src");
+            System.out.println("> SuccessFully donwloaded and unpacked BlazeLoader-src");
         }
 
         versionResolver = new VersionResolver(new File(blRoot, "BLVersion.properties"));
 
         if (isMCPInstalled(mcpTarget))
-            System.out.println(String.format("MCP is already installed, skipped download and extraction.", mcpTarget));
+            System.out.println(String.format("> MCP is already installed, skipped download and extraction.", mcpTarget));
         else if (isMCPDownloaded(mcpTarget))
         {
-            System.out.println("MCP is already donwloaded, skipping.");
+            System.out.println("> MCP is already donwloaded, skipping.");
 
             if (!unpackMCPZip(mcpTarget))
                 return false;
@@ -75,7 +74,7 @@ public class MCPInstall implements IInstallerAction
             if (!unpackMCPZip(mcpTarget))
                 return false;
 
-            System.out.println("Successfully downloaded and unpacked MCP");
+            System.out.println("> Successfully downloaded and unpacked MCP");
         }
 
         mcVersion = new UnresolvedString("{MC_VERSION}", versionResolver).call();
@@ -267,7 +266,10 @@ public class MCPInstall implements IInstallerAction
         if (!mcpJarFile.exists())
         {
             if (mcJarFile.exists())
+            {
+                System.out.println("> the MC jar already exists in the Minecraft evironment, copying");
                 Files.copy(mcJarFile, mcpJarFile);
+            }
             else if (!DownloadUtil.downloadFile(mcJar, mcpJarFile, new UnresolvedString(LibURL.MC_DOWNLOAD_JAR_URL, versionResolver).call(), true))
             {
                 postErrorMessage(String.format("Failed donwloading the minecraft %s, please try again and if it still doesn't work contact a dev.", mcJar));
@@ -278,7 +280,10 @@ public class MCPInstall implements IInstallerAction
         if (!jsonFile.exists())
         {
             if (mcJsonFile.exists())
+            {
+                System.out.println("> the MC jar already exists in the Minecraft evironment, copying");
                 Files.copy(mcJsonFile, jsonFile);
+            }
             else if (!DownloadUtil.downloadFile(mcJson, jsonFile, new UnresolvedString(LibURL.MC_JSON_FILE_URL, versionResolver).call(), true))
             {
                 postErrorMessage(String.format("Failed donwloading the minecraft %s, please try again and if it still doesn't work contact a dev.", mcJson));
@@ -329,16 +334,19 @@ public class MCPInstall implements IInstallerAction
     {
         File bin = new File(blRoot, "bin");
         bin.mkdir();
+        System.out.println("> Compiling AccessTransformer");
 
         if (!ExecutionUtil.compileJava(mcpTarget, "/BlazeLoader/source/core/net/acomputerdog/BlazeLoader/launcher/BLAccessTransformer.java", "/BlazeLoader/bin", "/jars/libraries/net/minecraft/launchwrapper/1.9/launchwrapper-1.9.jar", "/jars/libraries/org/ow2/asm/asm-debug-all/4.1/asm-debug-all-4.1.jar", "/BlazeLoader/bl_at.cfg"))
         {
-            MessageUtil.postErrorMessage("Failed to compile the AccessTransformer, are you sure you have the java JDK installed and your path is setup correctly.");
+            postErrorMessage("Failed to compile the AccessTransformer, are you sure you have the java JDK installed and your path is setup correctly.");
             return false;
         }
 
+        System.out.println("> Running AccessTransformer");
+
         if (!ExecutionUtil.runJava(mcpTarget, "net/acomputerdog/BlazeLoader/launcher/BLAccessTransformer", String.format("%s/jars/versions/%s/%s.jar %s/BlazeLoader/bl_at.cfg", mcpTarget.getAbsolutePath(), mcVersion, mcVersion, mcpTarget.getAbsolutePath()), "/BlazeLoader/bin", "/jars/libraries/net/minecraft/launchwrapper/1.9/launchwrapper-1.9.jar", "/jars/libraries/org/ow2/asm/asm-debug-all/4.1/asm-debug-all-4.1.jar"))
         {
-            MessageUtil.postErrorMessage("Failed to run the AccessTransformer, are you sure your java is installed right.");
+            postErrorMessage("Failed to run the AccessTransformer, are you sure your java is installed right.");
             return false;
         }
 

@@ -9,7 +9,7 @@ public class MessageUtil
     public static void postMessage(String text, String title, int type)
     {
         if (!gui)
-            System.out.println(text);
+            System.out.println("> " + text);
         else
             JOptionPane.showMessageDialog(null, text, title, type);
     }
