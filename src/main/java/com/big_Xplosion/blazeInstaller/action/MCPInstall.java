@@ -332,7 +332,13 @@ public class MCPInstall implements IInstallerAction
 
         if (!ExecutionUtil.compileJava(mcpTarget, "/BlazeLoader/source/core/net/acomputerdog/BlazeLoader/launcher/BLAccessTransformer.java", "/BlazeLoader/bin", "/jars/libraries/net/minecraft/launchwrapper/1.9/launchwrapper-1.9.jar", "/jars/libraries/org/ow2/asm/asm-debug-all/4.1/asm-debug-all-4.1.jar", "/BlazeLoader/bl_at.cfg"))
         {
-            MessageUtil.postErrorMessage("Failed to compile the AccessTransformer, are you sure you have the java JDK installed and your path is setup correctly");
+            MessageUtil.postErrorMessage("Failed to compile the AccessTransformer, are you sure you have the java JDK installed and your path is setup correctly.");
+            return false;
+        }
+
+        if (!ExecutionUtil.runJava(mcpTarget, "net/acomputerdog/BlazeLoader/launcher/BLAccessTransformer", String.format("%s/jars/versions/%s/%s.jar %s/BlazeLoader/bl_at.cfg", mcpTarget.getAbsolutePath(), mcVersion, mcVersion, mcpTarget.getAbsolutePath()), "/BlazeLoader/bin", "/jars/libraries/net/minecraft/launchwrapper/1.9/launchwrapper-1.9.jar", "/jars/libraries/org/ow2/asm/asm-debug-all/4.1/asm-debug-all-4.1.jar"))
+        {
+            MessageUtil.postErrorMessage("Failed to run the AccessTransformer, are you sure your java is installed right.");
             return false;
         }
 
