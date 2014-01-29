@@ -12,7 +12,7 @@ public class ExecutionUtil
     public static boolean compileJava(File baseFile, String targetFile, String binDir, String... classPath)
     {
         String base = baseFile.getAbsolutePath();
-        String cp = base + Joiner.on(getSplitter() + base).join(classPath);
+        String cp = base + Joiner.on(getSplitter() + base).join(classPath).replace('/', File.separatorChar);
 
         try
         {
