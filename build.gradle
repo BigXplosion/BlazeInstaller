@@ -12,9 +12,10 @@ repositories {
 }
 
 dependencies {
-    compile 'com.google.guava:guava:14.0'
+    compile 'com.google.guava:guava:15.0'
     compile 'net.sourceforge.argo:argo:3.7'
     compile 'net.sf.jopt-simple:jopt-simple:4.6'
+    compile 'commons-io:commons-io:2.4'
 }
 
 jar {

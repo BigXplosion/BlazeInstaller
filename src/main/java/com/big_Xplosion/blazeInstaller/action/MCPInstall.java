@@ -10,6 +10,7 @@ import com.big_Xplosion.blazeInstaller.unresolved.resolve.VersionResolver;
 import com.big_Xplosion.blazeInstaller.util.DownloadUtil;
 import com.big_Xplosion.blazeInstaller.util.ExecutionUtil;
 import com.big_Xplosion.blazeInstaller.util.ExtractUtil;
+import com.big_Xplosion.blazeInstaller.util.FileUtil;
 import com.big_Xplosion.blazeInstaller.util.OS;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
@@ -91,6 +92,12 @@ public class MCPInstall implements IInstallerAction
             return false;
 
         if (!applyAT(mcpTarget))
+            return false;
+
+        if (!decompile(mcpTarget))
+            return false;
+
+        if (!copySources(mcpTarget))
             return false;
 
         return true;
@@ -350,6 +357,25 @@ public class MCPInstall implements IInstallerAction
             return false;
         }
 
+        return true;
+    }
+
+    private boolean decompile(File mcpTarget)
+    {
+        System.out.println("> Decompiling minecraft");
+
+        if (ExecutionUtil.runShellOrBat(mcpTarget, "decompile"))
+        {
+            postErrorMessage("Failed to decompile Minecraft, please try again and if it still doesn't work contact a dev.");
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean copySources(File mcpTarget) throws IOException
+    {
+        FileUtil.copyAndOverwriteSources(new File(new File(blRoot, "source"), "vanilla"), new File(new File(mcpTarget, "src"), "minecraft"));
         return true;
     }
 }
