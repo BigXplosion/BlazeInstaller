@@ -62,7 +62,7 @@ public class ExecutionUtil
         return true;
     }
 
-    public static boolean runShellOrBat(File target, String script)
+    public static void runShellOrBat(File target, String script)
     {
         OS os = OS.getCurrentPlatform();
 
@@ -71,7 +71,11 @@ public class ExecutionUtil
             Process process;
 
             if (os.equals(OS.WINDOWS))
-                process = Runtime.getRuntime().exec(target.getAbsolutePath() + File.separator + script + ".bat");
+            {
+                ProcessBuilder pb = new ProcessBuilder("cmd.exe", script + ".bat");
+                pb.directory(target);
+                process = pb.start();
+            }
             else
             {
                 ProcessBuilder pb = new ProcessBuilder("/bin/bash", script + ".sh");
@@ -86,8 +90,6 @@ public class ExecutionUtil
                 System.out.println(line);
 
             reader.close();
-
-            return true;
         }
         catch (IOException e)
         {

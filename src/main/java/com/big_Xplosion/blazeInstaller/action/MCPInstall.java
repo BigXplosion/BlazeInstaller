@@ -363,12 +363,7 @@ public class MCPInstall implements IInstallerAction
     private boolean decompile(File mcpTarget)
     {
         System.out.println("> Decompiling minecraft");
-
-        if (ExecutionUtil.runShellOrBat(mcpTarget, "decompile"))
-        {
-            postErrorMessage("Failed to decompile Minecraft, please try again and if it still doesn't work contact a dev.");
-            return false;
-        }
+        ExecutionUtil.runShellOrBat(mcpTarget, "decompile");
 
         return true;
     }
