@@ -69,13 +69,17 @@ public class MCPInstall implements IInstallerAction
         }
         else
         {
-            if (!downloadMCP(mcpTarget))
-                return false;
+            //TODO: change back on stable MCP release!
+            //if (!downloadMCP(mcpTarget))
+                //return false;
 
-            if (!unpackMCPZip(mcpTarget))
-                return false;
+            //if (!unpackMCPZip(mcpTarget))
+                //return false;
 
-            System.out.println("> Successfully downloaded and unpacked MCP");
+            //System.out.println("> Successfully downloaded and unpacked MCP");
+
+            postErrorMessage("MCP can't be downloaded automaticly, please download the MCP903 manually");
+            return false;
         }
 
         mcVersion = new UnresolvedString("{MC_VERSION}", versionResolver).call();
@@ -125,7 +129,7 @@ public class MCPInstall implements IInstallerAction
     {
         if (targetFile.isDirectory())
         {
-            File zipFile = new File(targetFile, new UnresolvedString(LibNames.MCP_NAME, versionResolver).call() + ".zip");
+            File zipFile = new File(targetFile,/* new UnresolvedString(LibNames.MCP_NAME, versionResolver).call() + */"mcp903.zip"); //TODO: change back to original on stable MCP release!
 
             if (zipFile.exists())
                 return true;
@@ -188,9 +192,10 @@ public class MCPInstall implements IInstallerAction
 
     private boolean unpackMCPZip(File mcpTarget)
     {
-        System.out.println("Extracting MCP.");
-        String zipName = new UnresolvedString(LibNames.MCP_NAME, versionResolver).call() + ".zip";
-        File mcpZip = new File(mcpTarget, zipName);
+        System.out.println("> Extracting MCP.");
+        @SuppressWarnings("unused")
+        String zipName = new UnresolvedString(LibNames.MCP_NAME, versionResolver).call() + ".zip"; //TODO: change to real name when there is a stable release of MCP!
+        File mcpZip = new File(mcpTarget, "mcp903.zip");
 
         if (!ExtractUtil.extractZip(mcpZip, mcpTarget))
         {
@@ -241,6 +246,7 @@ public class MCPInstall implements IInstallerAction
 
     private boolean unpackBLZip(File targetFile) throws IOException
     {
+        System.out.println("> Extracting BlazeLoader");
         File blZip = new File(targetFile, "BlazeLoader.zip");
 
         if (!ExtractUtil.extractZip(blZip, targetFile))

@@ -4,6 +4,11 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.util.Collection;
 
 public class FileUtil
@@ -31,12 +36,18 @@ public class FileUtil
         if (source == null || !source.exists() || !source.isDirectory() || destination == null || !destination.exists() || !destination.isDirectory())
             throw new IllegalArgumentException(String.format("source: % and destination: %s must be directories", source.getAbsolutePath(), destination.getAbsolutePath()));
 
-        Collection<File> contents = FileUtils.listFiles(source, new String[] {"java"}, true);
+        Collection<File> contents = FileUtils.listFiles(source, new String[]{"java"}, true);
 
         for (File f : contents)
         {
-            File dst = new File(destination, new File(f.toURI().relativize(source.toURI())).getCanonicalPath());
-            System.out.println(f.toURI().relativize(destination.toURI()).toString());
+            String changedSourcePath = f.getAbsolutePath().replace(source.getAbsolutePath(), "");
+            File dst = new File(destination, changedSourcePath.replace('/', File.separatorChar));
+
+            InputStream in = new BufferedInputStream(new FileInputStream(f));
+            OutputStream out = new FileOutputStream(dst);
+            byte[] data = new byte[in.available()];
+            in.read(data);
+            out.write(data);
         }
     }
 
