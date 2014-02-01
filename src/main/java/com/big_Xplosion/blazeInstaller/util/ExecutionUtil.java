@@ -53,19 +53,18 @@ public class ExecutionUtil
                 System.out.println(line);
 
             reader.close();
-
-            return true;
         }
         catch (IOException e)
         {
             throw new RuntimeException(e);
         }
+
+        return true;
     }
 
     public static boolean runShellOrBat(File target, String script)
     {
         OS os = OS.getCurrentPlatform();
-        File runtime = new File(target, "runtime");
 
         try
         {
@@ -75,7 +74,9 @@ public class ExecutionUtil
                 process = Runtime.getRuntime().exec(target.getAbsolutePath() + File.separator + script + ".bat");
             else
             {
-                process = Runtime.getRuntime().exec("python " + runtime.getAbsolutePath() + File.separator + script + ".py \"$@\"");
+                ProcessBuilder pb = new ProcessBuilder("/bin/bash", script + ".sh");
+                pb.directory(target);
+                process = pb.start();
             }
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
@@ -101,6 +102,4 @@ public class ExecutionUtil
 
         return ':';
     }
-
-    //how do I force my mac to use the custom python shipped with MCP? It always tries to use the normal one.
 }
