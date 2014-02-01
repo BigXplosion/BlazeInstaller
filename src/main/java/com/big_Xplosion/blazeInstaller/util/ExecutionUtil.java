@@ -5,8 +5,8 @@ import com.google.common.base.Joiner;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 
 public class ExecutionUtil
 {
@@ -18,8 +18,8 @@ public class ExecutionUtil
         try
         {
             Process process = Runtime.getRuntime().exec(String.format("javac -cp %s -d %s %s", cp, base + binDir.replace('/', File.separatorChar), base + targetFile.replace('/', File.separatorChar)));
-            printStream(process.getErrorStream());
-            printStream(process.getInputStream());
+            printInStream(process.getErrorStream());
+            printInStream(process.getInputStream());
 
             return true;
         }
@@ -37,8 +37,8 @@ public class ExecutionUtil
         try
         {
             Process process = Runtime.getRuntime().exec(String.format("java -cp %s %s %s", cp, targetFile.replace('/', File.separatorChar), args));
-            printStream(process.getErrorStream());
-            printStream(process.getInputStream());
+            printInStream(process.getErrorStream());
+            printInStream(process.getInputStream());
 
             return true;
         }
@@ -69,8 +69,8 @@ public class ExecutionUtil
                 process = pb.start();
             }
 
-            printStream(process.getErrorStream());
-            printStream(process.getInputStream());
+            printInStream(process.getErrorStream());
+            printInStream(process.getInputStream());
         }
         catch (IOException e)
         {
@@ -86,7 +86,7 @@ public class ExecutionUtil
         return ':';
     }
 
-    private static void printStream(InputStream stream)
+    private static void printInStream(InputStream stream)
     {
         try
         {

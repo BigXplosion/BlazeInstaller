@@ -104,6 +104,9 @@ public class MCPInstall implements IInstallerAction
         if (!copySources(mcpTarget))
             return false;
 
+        if (!finalizeInstall(mcpTarget))
+            return false;
+
         return true;
     }
 
@@ -384,6 +387,24 @@ public class MCPInstall implements IInstallerAction
 
         System.out.println("> Copying BlazeLoader sources");
         FileUtil.copySources(new File(source, "core"), mcSources);
+
+        return true;
+    }
+
+    private boolean finalizeInstall(File mcpTarget)
+    {
+        boolean dev = Boolean.parseBoolean(System.getProperty("bli.bldev"));
+
+        if (dev)
+        {
+            System.out.println("> BL dev environment, recompiling");
+            ExecutionUtil.runShellOrBat(mcpTarget, "recompile");
+        }
+        else
+        {
+            System.out.println("> Normal dev environment, updating MD5s");
+            ExecutionUtil.runShellOrBat(mcpTarget, "updatemd5");
+        }
 
         return true;
     }
