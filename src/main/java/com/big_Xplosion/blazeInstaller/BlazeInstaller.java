@@ -17,6 +17,7 @@ public class BlazeInstaller
         OptionParser parser = new OptionParser();
         parser.acceptsAll(asList("mcp", "m"), "Install BlazeLoader in MCP.").withRequiredArg().ofType(File.class);
         parser.acceptsAll(asList("client", "c"), "Install BlazeLoader in a client Minecraft profile.").withRequiredArg().ofType(File.class);
+        parser.acceptsAll(asList("blazeloader", "bl"), "If true this will setup MCP for developing blazeloader itself, if false it will setup MCP for making mods with BlazeLoader.").withRequiredArg().ofType(Boolean.class);
         OptionSet options = parser.parse(args);
 
         if (options.specs().size() > 0)
@@ -36,6 +37,11 @@ public class BlazeInstaller
         if (options.has("mcp"))
         {
             File mcp = options.hasArgument("mcp") ? (File) options.valueOf("mcp") : new File(".");
+
+            if (options.has("blazeloader") && (Boolean) options.valueOf("blazeloader"))
+                System.setProperty("bli.bldev", "true");
+            else
+                System.setProperty("bli.bldev", "false");
 
             try
             {
