@@ -1,5 +1,6 @@
 package com.big_Xplosion.blazeInstaller.util;
 
+import com.google.common.io.Files;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -48,6 +49,22 @@ public class FileUtil
             byte[] data = new byte[in.available()];
             in.read(data);
             out.write(data);
+        }
+    }
+
+    public static void copySources(File source, File destination) throws IOException
+    {
+        if (source == null || !source.exists() || !source.isDirectory())
+            throw new IllegalArgumentException(String.format("source: %s", source.getAbsolutePath()));
+
+        Collection<File> contents = FileUtils.listFiles(source, new String[]{"java"}, true);
+
+        for (File f : contents)
+        {
+            String sourcePath = f.getAbsolutePath().replace(source.getAbsolutePath(), "");
+            File dst = new File(destination, sourcePath.replace('/', File.separatorChar));
+            Files.createParentDirs(dst);
+            Files.copy(f, dst);
         }
     }
 

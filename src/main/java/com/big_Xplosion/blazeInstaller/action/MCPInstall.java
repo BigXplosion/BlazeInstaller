@@ -71,10 +71,10 @@ public class MCPInstall implements IInstallerAction
         {
             //TODO: change back on stable MCP release!
             //if (!downloadMCP(mcpTarget))
-                //return false;
+            //return false;
 
             //if (!unpackMCPZip(mcpTarget))
-                //return false;
+            //return false;
 
             //System.out.println("> Successfully downloaded and unpacked MCP");
 
@@ -376,7 +376,15 @@ public class MCPInstall implements IInstallerAction
 
     private boolean copySources(File mcpTarget) throws IOException
     {
-        FileUtil.copyAndOverwriteSources(new File(new File(blRoot, "source"), "vanilla"), new File(new File(mcpTarget, "src"), "minecraft"));
+        File source = new File(blRoot, "source");
+        File mcSources = new File(new File(mcpTarget, "src"), "minecraft");
+
+        System.out.println("> Copying and overwriting edited MC sources");
+        FileUtil.copyAndOverwriteSources(new File(source, "vanilla"), new File(new File(mcpTarget, "src"), "minecraft"));
+
+        System.out.println("> Copying BlazeLoader sources");
+        FileUtil.copySources(new File(source, "core"), mcSources);
+
         return true;
     }
 }
