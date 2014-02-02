@@ -433,10 +433,14 @@ public class MCPInstall implements IInstallerAction
                     try
                     {
                         BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+                        @SuppressWarnings("unused")
                         String line;
 
                         while ((line = reader.readLine()) != null)
-                            System.out.println(line);
+                        {
+                            //Swallow output to stop confusing output.
+                        }
+
 
                         reader.close();
                     }
