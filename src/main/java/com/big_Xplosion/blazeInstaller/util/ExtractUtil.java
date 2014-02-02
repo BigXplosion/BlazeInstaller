@@ -37,7 +37,7 @@ public class ExtractUtil
                 };
 
                 File currFile = new File(outputFile, entry.getName());
-                FileUtil.createDirStructureForFile(currFile);
+                Files.createParentDirs(currFile);
                 Files.copy(supplier, currFile);
             }
 

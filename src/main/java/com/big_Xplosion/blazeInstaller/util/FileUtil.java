@@ -14,6 +14,7 @@ import java.util.Collection;
 
 public class FileUtil
 {
+    @SuppressWarnings("unused")
     public static void createDirStructureForFile(File file)
     {
         if (!file.exists())
