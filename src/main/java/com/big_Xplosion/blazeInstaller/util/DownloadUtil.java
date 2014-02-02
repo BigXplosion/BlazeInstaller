@@ -66,12 +66,14 @@ public class DownloadUtil
 
             if (!downloadFile(name, libPath, libURL, true))
             {
-                if (type.equals(InstallType.CLIENT) && libURL.startsWith(LibURL.MC_DOWNLOAD_LIB_ROOT_URL))
-                    System.out.println(String.format("> failed to download %s, Minecraft launcher will download these on the next run.", name));
-                else if (type.equals(InstallType.MCP) && libURL.startsWith(LibURL.MC_DOWNLOAD_LIB_ROOT_URL))
-                    System.out.println(String.format("> failed to download %s, mcp will download these later.", name));
+                boolean autoDownload = lib.isBooleanValue("autodownload") ? lib.getBooleanValue("autodownload") : true;
 
-                failed.add(lib);
+                if (!autoDownload)
+                    failed.add(lib);
+                else if (type.equals(InstallType.CLIENT))
+                    System.out.println(String.format("> failed to download %s, Minecraft launcher will download these on the next run.", name));
+                else if (type.equals(InstallType.MCP))
+                    System.out.println(String.format("> failed to download %s, mcp will download these later.", name));
             }
             else
                 System.out.println(String.format("> Downloaded library: %s", jarName));

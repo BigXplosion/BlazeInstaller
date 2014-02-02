@@ -16,9 +16,11 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.List;
 
 import static com.big_Xplosion.blazeInstaller.util.MessageUtil.postErrorMessage;
@@ -86,11 +88,11 @@ public class MCPInstall implements IInstallerAction
         File jarsDir = new File(mcpTarget, "jars");
         File libDir = new File(jarsDir, "libraries");
         File versionDir = new File(new File(jarsDir, "versions"), mcVersion);
-        File devJson = new File(new File(blRoot, "json"), String.format("BL-%s-dev.json", mcVersion));
+        File libJson = new File(new File(blRoot, "json"), "libraries.json");
         Files.createParentDirs(libDir);
         Files.createParentDirs(versionDir);
 
-        downloadLibraries(libDir, devJson);
+        downloadLibraries(libDir, libJson);
 
         if (!checkVersionFiles(versionDir))
             return false;
@@ -106,6 +108,8 @@ public class MCPInstall implements IInstallerAction
 
         if (!finalizeInstall(mcpTarget))
             return false;
+
+        System.out.println("> Successfully installed BlazeLoader in the MCP environment.");
 
         return true;
     }
@@ -180,6 +184,7 @@ public class MCPInstall implements IInstallerAction
         return false;
     }
 
+    @SuppressWarnings("unused")
     private boolean downloadMCP(File targetFile)
     {
         String mcpURL = new UnresolvedString(LibURL.MCP_DOWNLOAD_URL, versionResolver).call();
@@ -273,9 +278,9 @@ public class MCPInstall implements IInstallerAction
         String mcJson = mcVersion + ".json";
         File mcVersionFile = new File(new File(OS.getMinecraftDir(), "versions"), mcVersion);
         File mcJarFile = new File(mcVersionFile, mcJar);
-        File mcJsonFile = new File(mcVersionFile, mcJson);
         File mcpJarFile = new File(versionTarget, mcJar);
         File jsonFile = new File(versionTarget, mcJson);
+        File blJsonFile = new File(new File(blRoot, "json"), "BL-1.7.2-dev.json");
         Files.createParentDirs(mcpJarFile);
         Files.createParentDirs(jsonFile);
 
@@ -293,24 +298,12 @@ public class MCPInstall implements IInstallerAction
             }
         }
 
-        if (!jsonFile.exists())
-        {
-            if (mcJsonFile.exists())
-            {
-                System.out.println("> the MC jar already exists in the Minecraft evironment, copying");
-                Files.copy(mcJsonFile, jsonFile);
-            }
-            else if (!DownloadUtil.downloadFile(mcJson, jsonFile, new UnresolvedString(LibURL.MC_JSON_FILE_URL, versionResolver).call(), true))
-            {
-                postErrorMessage(String.format("Failed donwloading the minecraft %s, please try again and if it still doesn't work contact a dev.", mcJson));
-                return false;
-            }
-        }
+        Files.copy(blJsonFile, jsonFile);
 
         return true;
     }
 
-    private void downloadLibraries(File libTarget, File devJson) throws IOException
+    private void downloadLibraries(File libTarget, File libJson) throws IOException
     {
         JdomParser parser = new JdomParser();
         List<JsonNode> libraries = null;
@@ -318,7 +311,7 @@ public class MCPInstall implements IInstallerAction
 
         try
         {
-            JsonRootNode data = parser.parse(new FileReader(devJson));
+            JsonRootNode data = parser.parse(new FileReader(libJson));
             libraries = data.getArrayNode("libraries");
         }
         catch (Exception e)
@@ -335,7 +328,7 @@ public class MCPInstall implements IInstallerAction
 
             for (JsonNode fail : failed)
             {
-                if (!fail.isBooleanValue("mcpdownload") || fail.getBooleanValue("mcpdownload"))
+                if (!fail.isBooleanValue("autodownload") || fail.getBooleanValue("autodownload"))
                     continue;
                 else
                     problems.add(fail);
@@ -403,9 +396,80 @@ public class MCPInstall implements IInstallerAction
         else
         {
             System.out.println("> Normal dev environment, updating MD5s");
-            ExecutionUtil.runShellOrBat(mcpTarget, "updatemd5");
+            updateMD5s(mcpTarget);
         }
 
         return true;
+    }
+
+    private void updateMD5s(File mcpTarget)
+    {
+        OS os = OS.getCurrentPlatform();
+
+        try
+        {
+            final Process p;
+
+            if (os.equals(OS.WINDOWS))
+            {
+                ProcessBuilder pb = new ProcessBuilder("cmd.exe", "updatemd5.bat");
+                pb.directory(mcpTarget);
+                pb.redirectErrorStream(true);
+                p = pb.start();
+            }
+            else
+            {
+                ProcessBuilder pb = new ProcessBuilder("/bin/bash", "updatemd5.sh");
+                pb.directory(mcpTarget);
+                pb.redirectErrorStream(true);
+                p = pb.start();
+            }
+
+            Thread print = new Thread()
+            {
+                @Override
+                public void run()
+                {
+                    try
+                    {
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+                        String line;
+
+                        while ((line = reader.readLine()) != null)
+                            System.out.println(line);
+
+                        reader.close();
+                    }
+                    catch (IOException e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+            };
+
+            Thread answer = new Thread()
+            {
+                @Override
+                public void run()
+                {
+                    try
+                    {
+                        p.getOutputStream().write(("yes" + System.getProperty("line.separator")).getBytes());
+                        p.getOutputStream().flush();
+                    }
+                    catch (IOException e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+            };
+
+            print.start();
+            answer.start();
+        }
+        catch (IOException e)
+        {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -3,10 +3,12 @@ package com.big_Xplosion.blazeInstaller.util;
 import com.google.common.base.Joiner;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 
 public class ExecutionUtil
 {
@@ -60,16 +62,17 @@ public class ExecutionUtil
             {
                 ProcessBuilder pb = new ProcessBuilder("cmd.exe", script + ".bat");
                 pb.directory(target);
+                pb.redirectErrorStream(true);
                 process = pb.start();
             }
             else
             {
                 ProcessBuilder pb = new ProcessBuilder("/bin/bash", script + ".sh");
                 pb.directory(target);
+                pb.redirectErrorStream(true);
                 process = pb.start();
             }
 
-            printInStream(process.getErrorStream());
             printInStream(process.getInputStream());
         }
         catch (IOException e)
