@@ -243,6 +243,9 @@ public class MCPInstall implements IInstallerAction
             System.out.println(String.format("Failed to download the BlazeLoader src version: %s from %s, please try again and if this still doesn't work the site may be down or you can contact a dev.", parts[1], parts[2]));
 
         */
+
+        System.out.println("> Donwloading BlazeLoader-src");
+
         if (!DownloadUtil.downloadFile("BlazeLoader-src", new File(targetFile, "BlazeLoader.zip"), "https://github.com/warriordog/BlazeLoader/archive/master.zip", true))
         {
             postErrorMessage(String.format("Failed to download the BlazeLoader src from %s, please try again and if this still doesn't work the site may be down or you can contact a dev.", "http://github.com/warriordog/BlazeLoader/archive/master.zip"));
@@ -470,8 +473,11 @@ public class MCPInstall implements IInstallerAction
 
             print.start();
             answer.start();
+
+            print.join();
+            answer.join();
         }
-        catch (IOException e)
+        catch (Exception e)
         {
             throw new RuntimeException(e);
         }

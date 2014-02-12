@@ -48,7 +48,7 @@ public class DownloadUtil
 
             if (mcLibPath.exists())
             {
-                System.out.println(String.format("> %s exists in minecraft environment, copying from %s", jarName, libPath));
+                System.out.println(String.format("> %s exists in minecraft environment, copying from %s", jarName, mcLibPath));
 
                 Files.copy(mcLibPath, libPath);
                 continue;
