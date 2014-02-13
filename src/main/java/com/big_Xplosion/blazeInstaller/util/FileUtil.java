@@ -12,6 +12,7 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.Collection;
 
+//TODO: Clean up
 public class FileUtil
 {
     @SuppressWarnings("unused")

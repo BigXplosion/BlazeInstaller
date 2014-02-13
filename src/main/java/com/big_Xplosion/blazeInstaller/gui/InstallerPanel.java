@@ -22,6 +22,7 @@ import javax.swing.border.LineBorder;
 
 import com.big_Xplosion.blazeInstaller.action.InstallType;
 
+//TODO: Redo gui code, should have custom options, ability to choose BL version (client and MCP) or github version (only MCP), maybe tabs...
 public class InstallerPanel extends JPanel
 {
     private static final long serialVersionUID = 1L;

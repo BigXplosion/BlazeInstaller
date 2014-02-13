@@ -14,6 +14,7 @@ public class BlazeInstaller
 {
     public static void main(String[] args)
     {
+        //TODO: More options
         OptionParser parser = new OptionParser();
         parser.acceptsAll(asList("mcp", "m"), "Install BlazeLoader in MCP.").withRequiredArg().ofType(File.class);
         parser.acceptsAll(asList("client", "c"), "Install BlazeLoader in a client Minecraft profile.").withRequiredArg().ofType(File.class);
