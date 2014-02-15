@@ -1,10 +1,13 @@
 package com.big_Xplosion.blazeInstaller;
 
 import com.big_Xplosion.blazeInstaller.action.InstallType;
+import com.big_Xplosion.blazeInstaller.gui.InstallerGUI;
 import com.big_Xplosion.blazeInstaller.gui.InstallerPanel;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 
+import javax.swing.*;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
@@ -73,7 +76,22 @@ public class BlazeInstaller
 
     private static void launchGui()
     {
-        InstallerPanel panel = new InstallerPanel(new File(System.getProperty("user.dir")));
-        panel.run();
+        try
+        {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        }
+        catch (Throwable t)
+        {
+
+        }
+
+        SwingUtilities.invokeLater(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                InstallerGUI gui = new InstallerGUI();
+            }
+        });
     }
 }
