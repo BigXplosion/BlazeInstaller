@@ -351,7 +351,7 @@ public class MCPInstall implements IInstallerAction
 
         //TODO: get library versions from files
 
-        if (!ExecutionUtil.compileJava(mcpTarget, "/BlazeLoader/source/core/net/acomputerdog/BlazeLoader/launcher/BLAccessTransformer.java", "/BlazeLoader/bin", "/jars/libraries/net/minecraft/launchwrapper/1.8/launchwrapper-1.8.jar", "/jars/libraries/org/ow2/asm/asm-debug-all/4.1/asm-debug-all-4.1.jar", "/BlazeLoader/bl_at.cfg"))
+        if (!ExecutionUtil.compileJava(mcpTarget, "/BlazeLoader/source/core/net/acomputerdog/BlazeLoader/launcher/BLAccessTransformer.java", "/BlazeLoader/bin", "/jars/libraries/net/minecraft/launchwrapper/1.9/launchwrapper-1.9.jar", "/jars/libraries/org/ow2/asm/asm-debug-all/4.1/asm-debug-all-4.1.jar", "/BlazeLoader/bl_at.cfg"))
         {
             postErrorMessage("Failed to compile the AccessTransformer, are you sure you have the java JDK installed and your path is setup correctly.");
             return false;
@@ -359,7 +359,7 @@ public class MCPInstall implements IInstallerAction
 
         System.out.println("> Running AccessTransformer");
 
-        if (!ExecutionUtil.runJava(mcpTarget, "net/acomputerdog/BlazeLoader/launcher/BLAccessTransformer", String.format("%s/jars/versions/%s/%s.jar %s/BlazeLoader/bl_at.cfg", mcpTarget.getAbsolutePath(), mcVersion, mcVersion, mcpTarget.getAbsolutePath()), "/BlazeLoader/bin", "/jars/libraries/net/minecraft/launchwrapper/1.8/launchwrapper-1.8.jar", "/jars/libraries/org/ow2/asm/asm-debug-all/4.1/asm-debug-all-4.1.jar"))
+        if (!ExecutionUtil.runJava(mcpTarget, "net/acomputerdog/BlazeLoader/launcher/BLAccessTransformer", String.format("%s/jars/versions/%s/%s.jar %s/BlazeLoader/bl_at.cfg", mcpTarget.getAbsolutePath(), mcVersion, mcVersion, mcpTarget.getAbsolutePath()), "/BlazeLoader/bin", "/jars/libraries/net/minecraft/launchwrapper/1.9/launchwrapper-1.9.jar", "/jars/libraries/org/ow2/asm/asm-debug-all/4.1/asm-debug-all-4.1.jar"))
         {
             postErrorMessage("Failed to run the AccessTransformer, are you sure your java is installed right.");
             return false;
