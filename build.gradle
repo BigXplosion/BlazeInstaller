@@ -5,8 +5,6 @@ apply plugin: 'application'
 
 version = '1.0.0-SNAPSHOT'
 group = 'com.big_Xplosion'
-targetCompatibility = '1.6'
-sourceCompatibility = '1.6'
 
 repositories {
     mavenCentral()
@@ -20,8 +18,7 @@ dependencies {
 }
 
 task fatJar(type: Jar) {
-    from files(sourceSets.main.output.classesDir)
-    from files(sourceSets.main.output.resourcesDir)
+    from sourceSets.main.output
     from {configurations.compile.collect {zipTree(it)}}
 
     manifest {

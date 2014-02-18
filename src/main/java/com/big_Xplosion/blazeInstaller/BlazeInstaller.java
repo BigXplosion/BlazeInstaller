@@ -22,9 +22,15 @@ public class BlazeInstaller
         parser.acceptsAll(asList("mcp", "m"), "Install BlazeLoader in MCP.").withRequiredArg().ofType(File.class);
         parser.acceptsAll(asList("client", "c"), "Install BlazeLoader in a client Minecraft profile.").withRequiredArg().ofType(File.class);
         parser.acceptsAll(asList("blazeloader", "bl"), "If true this will setup MCP for developing blazeloader itself, if false it will setup MCP for making mods with BlazeLoader.").withRequiredArg().ofType(Boolean.class);
+        parser.acceptsAll(asList("gui", "g"), "Force to open GUI even though running via the command line").withRequiredArg().ofType(Boolean.class);
         OptionSet options = parser.parse(args);
 
-        if (options.specs().size() > 0)
+        if (options.specs().size() > 0 && options.hasArgument("gui"))
+        {
+            System.setProperty("bli.gui", "true");
+            launchGui();
+        }
+        else if (options.specs().size() > 0)
         {
             System.setProperty("bli.gui", "false");
             handleOptions(options);
@@ -82,7 +88,7 @@ public class BlazeInstaller
         }
         catch (Throwable t)
         {
-
+            throw new RuntimeException(t);
         }
 
         SwingUtilities.invokeLater(new Runnable()

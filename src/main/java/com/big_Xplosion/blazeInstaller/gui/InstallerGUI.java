@@ -12,6 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 public class InstallerGUI extends JFrame
 {
@@ -45,8 +46,8 @@ public class InstallerGUI extends JFrame
     {
         try
         {
-            File imageFile = new File(Resources.getResource("BlazeLoaderLogo.png").toURI());
-            BufferedImage image = ImageIO.read(imageFile);
+            InputStream imageStream = InstallerGUI.class.getClassLoader().getResourceAsStream("BlazeLoaderLogo.png");
+            BufferedImage image = ImageIO.read(imageStream);
             JLabel label = new JLabel(new ImageIcon(image));
             this.getContentPane().add(label, BorderLayout.NORTH);
         }
