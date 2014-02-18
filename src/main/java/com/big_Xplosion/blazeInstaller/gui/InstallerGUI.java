@@ -192,6 +192,24 @@ public class InstallerGUI extends JFrame
         }
     }
 
+    private class GrayButtonControlAction extends AbstractAction
+    {
+        public JButton targetButton;
+        public boolean enabled;
+
+        public GrayButtonControlAction(JButton targetButton, boolean enabled)
+        {
+            this.targetButton = targetButton;
+            this.enabled = enabled;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e)
+        {
+            this.targetButton.setEnabled(this.enabled);
+        }
+    }
+
     private class MCPOptionsFrame extends JFrame
     {
         private MCPOptionsFrame()
@@ -209,24 +227,39 @@ public class InstallerGUI extends JFrame
         {
             JPanel versionPanel = new JPanel(new GridBagLayout());
             GridBagConstraints gbc = new GridBagConstraints();
+            ButtonGroup buttonGroup = new ButtonGroup();
 
             TitledBorder border = BorderFactory.createTitledBorder("Version");
             border.setTitlePosition(TitledBorder.TOP);
             versionPanel.setBorder(border);
 
-            ButtonGroup versionButtons = new ButtonGroup();
+            JPanel chooseVersionPanel = new JPanel();
+
+            JTextField versionText = new JTextField();
+            versionText.setText("Latest");
+            versionText.setEditable(false);
+            versionText.setColumns(15);
+
+            JButton chooseVersionButton = new JButton();
+            chooseVersionButton.setText("versions");
+
+            chooseVersionPanel.add(versionText);
+            chooseVersionPanel.add(chooseVersionButton);
 
             JRadioButton latestButton = new JRadioButton();
+            latestButton.setAction(new GrayButtonControlAction(chooseVersionButton, false));
             latestButton.setText("Use latest version");
-            versionButtons.add(latestButton);
+            buttonGroup.add(latestButton);
 
             JRadioButton githubButton = new JRadioButton();
+            githubButton.setAction(new GrayButtonControlAction(chooseVersionButton, false));
             githubButton.setText("Use github version");
-            versionButtons.add(githubButton);
+            buttonGroup.add(githubButton);
 
             JRadioButton chooseButton = new JRadioButton();
+            chooseButton.setAction(new GrayButtonControlAction(chooseVersionButton, true));
             chooseButton.setText("Choose version");
-            versionButtons.add(chooseButton);
+            buttonGroup.add(chooseButton);
 
             gbc.gridx = 0;
             gbc.gridy = 0;
@@ -238,6 +271,9 @@ public class InstallerGUI extends JFrame
 
             gbc.gridy = 2;
             versionPanel.add(chooseButton, gbc);
+
+            gbc.gridy = 3;
+            versionPanel.add(chooseVersionPanel, gbc);
 
             this.getContentPane().add(versionPanel);
         }
