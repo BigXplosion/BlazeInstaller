@@ -1,10 +1,12 @@
 package com.big_Xplosion.blazeInstaller.util;
 
+import com.big_Xplosion.blazeInstaller.config.InstallerPreferences;
+
 import javax.swing.*;
 
 public class MessageUtil
 {
-    public static boolean gui = Boolean.parseBoolean(System.getProperty("bli.gui"));
+    public static boolean gui = InstallerPreferences.USE_GUI;
 
     public static void postMessage(String text, String title, int type)
     {

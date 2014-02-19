@@ -26,6 +26,7 @@ public class VersionResolver implements IResolver
     {
         input = input.replace("{MCP_VERSION}", versions.get("mcp"));
         input = input.replace("{MC_VERSION}", versions.get("mc"));
+        input = input.replace("{FORGE_VERSION}", versions.get("forge"));
 
         return input;
     }

@@ -3,6 +3,7 @@ package com.big_Xplosion.blazeInstaller.action;
 import argo.jdom.JdomParser;
 import argo.jdom.JsonNode;
 import argo.jdom.JsonRootNode;
+import com.big_Xplosion.blazeInstaller.config.InstallerPreferences;
 import com.big_Xplosion.blazeInstaller.lib.LibNames;
 import com.big_Xplosion.blazeInstaller.lib.LibURL;
 import com.big_Xplosion.blazeInstaller.unresolved.UnresolvedString;
@@ -83,6 +84,29 @@ public class MCPInstall implements IInstallerAction
 
             postErrorMessage("MCP can't be downloaded automaticly, please download the MCP903 manually");
             return false;
+        }
+
+        if (InstallerPreferences.FORGE)
+        {
+            if (isForgeInstalled(mcpTarget))
+                System.out.println(String.format("> Forge is already installed, skipped download and extraction.", mcpTarget));
+            else if (isForgeDownloaded(mcpTarget))
+            {
+                System.out.println("> Forge is already donwloaded, skipping.");
+
+                if (!unpackForge(mcpTarget))
+                    return false;
+            }
+            else
+            {
+                if (!downloadForge(mcpTarget))
+                    return false;
+
+                if (!unpackForge(mcpTarget))
+                    return false;
+
+                System.out.println("> Successfully downloaded and unpacked Forge");
+            }
         }
 
         mcVersion = new UnresolvedString("{MC_VERSION}", versionResolver).call();
@@ -185,9 +209,36 @@ public class MCPInstall implements IInstallerAction
         return false;
     }
 
+    private boolean isForgeDownloaded(File targetFile)
+    {
+        if (targetFile.isDirectory())
+        {
+            File forgeZip = new File(targetFile, new UnresolvedString("forge-{MC_VERSION}-{FORGE_VERSION}-src.zip", versionResolver).call());
+
+            if (forgeZip.exists())
+                return true;
+        }
+
+        return false;
+    }
+
+    private boolean isForgeInstalled(File targetFile)
+    {
+        if (targetFile.exists())
+        {
+            File forgeFile = new File(new File(targetFile, new UnresolvedString("forge-{MC_VERSION}-{FORGE_VERSION}-src", versionResolver).call()), "MinecraftForge-Credits.txt");
+
+            if (forgeFile.exists())
+                return true;
+        }
+
+        return false;
+    }
+
     @SuppressWarnings("unused")
     private boolean downloadMCP(File targetFile)
     {
+        //TODO: re-enable on stable MCP release
         String mcpURL = new UnresolvedString(LibURL.MCP_DOWNLOAD_URL, versionResolver).call();
 
         if (!DownloadUtil.downloadFile("MCP", targetFile, mcpURL, false))
@@ -272,6 +323,35 @@ public class MCPInstall implements IInstallerAction
         File blMaster = new File(targetFile, "BlazeLoader-master");
         File blDir = new File(targetFile, "BlazeLoader");
         Files.move(blMaster, blDir);
+
+        return true;
+    }
+
+    private boolean downloadForge(File targetFile) throws IOException
+    {
+        String forgeURL = new UnresolvedString(LibURL.FORGE_SRC_URL, versionResolver).call();
+
+        if (!DownloadUtil.downloadFile("Forge", targetFile, forgeURL, false))
+        {
+            postErrorMessage("Failed to download Forge, please try again and if it still doesn't work contact a dev.");
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean unpackForge(File targetFile)
+    {
+        System.out.println("> Extracting Forge-src");
+        File forgeZip = new File(targetFile, new UnresolvedString("forge-{MC_VERSION}-{FORGE_VERSION}-src.zip", versionResolver).call());
+
+        if (!ExtractUtil.extractZip(forgeZip, targetFile))
+        {
+            postErrorMessage("Failed to extract the BlazeLoader zip, please try again and if it still doesn't work contact a dev.");
+            return false;
+        }
+
+        forgeZip.delete();
 
         return true;
     }
@@ -392,7 +472,7 @@ public class MCPInstall implements IInstallerAction
 
     private boolean finalizeInstall(File mcpTarget)
     {
-        boolean dev = Boolean.parseBoolean(System.getProperty("bli.bldev"));
+        boolean dev = InstallerPreferences.BL_DEV;
 
         if (dev)
         {
